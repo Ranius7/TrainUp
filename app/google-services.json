@@ -1,0 +1,30 @@
+{
+  "project_info": {
+    "project_number": "563285662371",
+    "firebase_url": "https://trainup-26d35-default-rtdb.europe-west1.firebasedatabase.app",
+    "project_id": "trainup-26d35",
+    "storage_bucket": "trainup-26d35.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:563285662371:android:b0c7808e3aac6e55857d16",
+        "android_client_info": {
+          "package_name": "com.rania.trainup"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCgT8EcZ9DTuCw9GSGDrU0b-b-JZY-MIHI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

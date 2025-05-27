@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:card_view="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="12dp"
+    card_view:cardCornerRadius="12dp"
+    card_view:cardElevation="6dp"
+    android:backgroundTint="#FFFFFF">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <!-- Nombre del ejercicio -->
+        <TextView
+            android:id="@+id/tvExerciseNameClient"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Puente de glúteos"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:textColor="#111111"
+            android:layout_marginBottom="8dp" />
+
+        <!-- Detalles del ejercicio -->
+        <TextView
+            android:id="@+id/tvExerciseDetailsClient"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="4 series · 12 reps · 2 min descanso"
+            android:textSize="14sp"
+            android:textColor="#555555"
+            android:layout_marginBottom="4dp" />
+
+        <!-- Material necesario -->
+        <TextView
+            android:id="@+id/tvMaterialClient"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Material: Barra, polea, etc"
+            android:textSize="14sp"
+            android:textColor="#555555"
+            android:layout_marginBottom="4dp" />
+
+        <!-- Descripción del ejercicio -->
+        <TextView
+            android:id="@+id/tvDescriptionClient"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Descripción: esto se hace de esta manera"
+            android:textSize="14sp"
+            android:textColor="#555555"
+            android:layout_marginBottom="4dp" />
+
+        <!-- Botón de editar (visible solo para entrenador) -->
+        <Button
+            android:id="@+id/btnEditExercise"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Editar"
+            android:visibility="gone"
+            android:layout_gravity="end"
+            android:layout_marginTop="8dp"/>
+    </LinearLayout>
+</androidx.cardview.widget.CardView>

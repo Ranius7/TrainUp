@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">TrainUp</string>
+    <string name="login_text">Iniciar sesión</string>
+    <string name="register_text">Registrarse</string>
+    <string name="email_hint">Correo electrónico</string>
+    <string name="password_hint">Contraseña</string>
+    <string name="name_hint">Nombre completo</string>
+    <string name="max_clients_hint">Máximo de clientes</string>
+    <string name="no_account_text">¿No tienes cuenta? Regístrate aquí</string>
+    <string name="welcome_to_trainup">Bienvenido a TrainUp</string>
+    <string name="i_am_client">Soy Cliente</string>
+    <string name="i_am_trainer">Soy Entrenador</string>
+    <string name="objective_label">Objetivo</string>
+    <string name="select_trainer_label">Selecciona tu entrenador</string>
+    <string name="add_goal_button">Agregar objetivo</string>
+
+    <string name="nav_home">Hoy</string>
+    <string name="nav_training">Actividades</string>
+    <string name="nav_profile">Tú</string>
+
+    <string name="nav_home_trainer">Inicio</string>
+    <string name="nav_clients_trainer">Clientes</string>
+    <string name="nav_settings_trainer">Ajustes</string>
+
+    <string name="manage_routines_text">GESTIONAR RUTINAS DE %s</string>
+    <string name="view_progress_text">VER PROGRESO DE %s</string>
+    <string name="client_name_placeholder">RANIA</string>
+    <string name="client_age_placeholder">24 años</string>
+    <string name="new_clients_title">¡Tienes nuevos clientes!</string>
+    <string name="trainer_dashboard_description">Gestiona y revisa las rutinas de entrenamiento de tus clientes.</string>
+    <string name="your_new_clients">Tus clientes nuevos</string>
+    <string name="client_email_placeholder">email@cliente.com</string>
+    <string name="today_steps_title">Hoy has dado</string>
+    <string name="weekly_average_steps_title">Media semanal de pasos</string>
+    <string name="training_history_title">📅 Historial de entrenamientos</string>
+    <string name="evolution_title">📉 Evolución</string>
+    <string name="settings_title">Ajustes</string>
+    <string name="general_settings">General</string>
+    <string name="notifications_setting">Notificaciones</string>
+    <string name="dark_mode_setting">Modo oscuro</string>
+    <string name="account_settings">Cuenta</string>
+    <string name="change_name_button">Cambiar nombre</string>
+    <string name="change_email_button">Cambiar email</string>
+    <string name="change_password_button">Cambiar contraseña</string>
+    <string name="logout_button">Cerrar sesión</string>
+    <string name="training_plan_title">PLAN DE ENTRENAMIENTO DE %s</string>
+    <string name="training_fitness_title">Entrenamiento fitness</string>
+    <string name="material_label">Equipo: %s</string>
+    <string name="register_training_button">Registrar entrenamiento</string>
+    <string name="routine_title">Rutina de %s</string>
+    <string name="publish_routine_button">Publicar Rutina</string>
+    <string name="day_exercise_title">%s - %s</string>
+    <string name="add_exercise_button">Añadir ejercicio</string>
+    <string name="save_button">Guardar</string>
+    <string name="exercise_name_hint">Nombre del ejercicio</string>
+    <string name="material_hint">Material</string>
+    <string name="series_hint">Series</string>
+    <string name="repetitions_hint">Repeticiones</string>
+    <string name="rest_hint">Descanso</string>
+    <string name="description_hint">Descripción</string>
+    <string name="daily_steps_data_placeholder">7.000 pasos</string>
+    <string name="weekly_average_data_placeholder">5287 pasos/día</string>
+    <string name="client_all_clients_title">Clientes</string>
+    <string name="new_clients_page_title">NUEVOS CLIENTES</string>
+
+</resources>

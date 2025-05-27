@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@color/white">
+
+    <!-- CABECERA -->
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbarClient"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/white"
+        android:title="Entrenamiento fitness"
+        app:titleTextColor="@color/black"
+        android:navigationIcon="@drawable/ic_arrow_back" />
+
+    <!-- Contenido principal -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <!-- Título del entreno -->
+        <TextView
+            android:id="@+id/tvTrainingTitleClient"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Glúteos"
+            android:textSize="24sp"
+            android:textStyle="bold"
+            android:textColor="@color/black"
+            android:layout_marginBottom="8dp" />
+
+        <!-- Material necesario -->
+        <TextView
+            android:id="@+id/tvMaterialClient"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Equipo: barra, mancuernas, máquina, polea"
+            android:textSize="16sp"
+            android:textColor="#444444"
+            android:layout_marginBottom="16dp" />
+
+        <!-- RecyclerView para ejercicios -->
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rvExercisesClient"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1" />
+
+        <!-- Botón para iniciar el entrenamiento -->
+        <Button
+            android:id="@+id/btnStartTraining"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Iniciar entrenamiento"
+            android:textAllCaps="false"
+            android:textColor="@android:color/white"
+            android:backgroundTint="@color/purple_trainer"
+            android:layout_marginTop="16dp"
+            android:padding="12dp" />
+
+        <!-- Botón para finalizar el entrenamiento -->
+        <Button
+            android:id="@+id/btnFinishTraining"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Finalizar entrenamiento"
+            android:textAllCaps="false"
+            android:textColor="@android:color/white"
+            android:backgroundTint="@color/purple_trainer"
+            android:layout_marginTop="8dp"
+            android:padding="12dp"
+            android:enabled="false" />
+
+    </LinearLayout>
+
+    <!-- Barra de navegación inferior -->
+    <com.google.android.material.bottomnavigation.BottomNavigationView
+        android:id="@+id/bottomNavigationClient"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        app:menu="@menu/bottom_nav_menu" />
+
+</LinearLayout>
