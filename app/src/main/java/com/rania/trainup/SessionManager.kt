@@ -10,7 +10,7 @@ class SessionManager(context: Context) {
     companion object {
         const val KEY_EMAIL = "KEY_EMAIL"
         const val KEY_ROLE = "KEY_ROLE"
-        const val KEY_UID = "KEY_UID" // ¡IMPORTANTE! Añadimos el UID
+        const val KEY_UID = "KEY_UID"
     }
 
     fun saveSession(email: String, role: String, uid: String) {

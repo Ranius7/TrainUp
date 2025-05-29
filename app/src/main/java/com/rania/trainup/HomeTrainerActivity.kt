@@ -43,11 +43,11 @@ class HomeTrainerActivity : AppCompatActivity() {
             return
         }
 
-        // Configurar RecyclerView para nuevos clientes
+        // recyclerView para nuevos clientes
         newClientsAdapter = NewClientAdapter(newClientsList) { clickedClient ->
             navigateToClientDetail(clickedClient)
         }
-        binding.rvNewClients.apply { // Asumo rvNewClientsTrainer
+        binding.rvNewClients.apply {
             layoutManager = LinearLayoutManager(this@HomeTrainerActivity)
             adapter = newClientsAdapter
         }
@@ -79,7 +79,6 @@ class HomeTrainerActivity : AppCompatActivity() {
     private fun loadNewClients(trainerUid: String) {
         CoroutineScope(Dispatchers.Main).launch {
             try {
-                // ATENCIÓN: En Firestore tu campo es "new", no "isNew"
                 val querySnapshot = firestore.collection("users")
                     .whereEqualTo("role", "CLIENT")
                     .whereEqualTo("trainerUid", trainerUid)
@@ -119,18 +118,18 @@ class HomeTrainerActivity : AppCompatActivity() {
     }
 
     private fun setupClickListeners() {
-        binding.cvNewClients.setOnClickListener { // CardView "Nuevos Clientes"
+        binding.cvNewClients.setOnClickListener {
             val intent = Intent(this, NewClientsTrainerActivity::class.java)
             startActivity(intent)
         }
-        binding.cvManageClients.setOnClickListener { // CardView "Gestiona y revisa rutinas"
+        binding.cvManageClients.setOnClickListener {
             val intent = Intent(this, ActiveClientsTrainerActivity::class.java)
             startActivity(intent)
         }
     }
 
     private fun navigateToClientDetail(client: Client) {
-        val intent = Intent(this, ClientTrainerActivity::class.java) // Asumo ClientTrainerActivity para detalles
+        val intent = Intent(this, ClientTrainerActivity::class.java)
         intent.putExtra("client_uid", client.uid)
         startActivity(intent)
     }

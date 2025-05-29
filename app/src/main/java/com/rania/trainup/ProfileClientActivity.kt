@@ -104,7 +104,7 @@ class ProfileClientActivity : AppCompatActivity() {
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
-            R.id.itSettings -> { // Asumo itSettings es el ID del icono de ajustes en profile_menu.xml
+            R.id.itSettings -> {
                 val intent = Intent(this, SettingsActivity::class.java)
                 startActivity(intent)
                 true

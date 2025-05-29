@@ -46,7 +46,6 @@ class RoutineClientActivity : AppCompatActivity() {
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         binding.toolbarClient.setNavigationOnClickListener { onBackPressedDispatcher.onBackPressed() }
 
-        // INICIALIZA EL ADAPTADOR Y EL RECYCLERVIEW AQUÍ:
         routineDayAdapter = RoutineDayAdapter(
             routineDaysList,
             false,
@@ -114,7 +113,7 @@ override fun onDestroy() {
 
     private fun navigateToTrainingClient(routineDay: RoutineDay) {
         val intent = Intent(this, TrainingClientActivity::class.java)
-        intent.putExtra("routine_day", routineDay) // Pasa el objeto RoutineDay
+        intent.putExtra("routine_day", routineDay) // pasar el objeto RoutineDay
         startActivity(intent)
     }
 
@@ -127,7 +126,7 @@ override fun onDestroy() {
                     true
                 }
                 R.id.itNavTraining -> {
-                    true // Ya estás aquí, no hagas nada
+                    true // ya estamos aqui, no se hace nada
                 }
                 R.id.itNavProfile -> {
                     startActivity(Intent(this, ProfileClientActivity::class.java))

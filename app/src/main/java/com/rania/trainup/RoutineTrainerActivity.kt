@@ -19,7 +19,7 @@ class RoutineTrainerActivity : AppCompatActivity() {
     private lateinit var auth: FirebaseAuth
     private lateinit var firestore: FirebaseFirestore
     private lateinit var sessionManager: SessionManager
-    private lateinit var routineDayAdapter: RoutineDayAdapter // Adaptador para los días de rutina
+    private lateinit var routineDayAdapter: RoutineDayAdapter
     private val routineDaysList = mutableListOf<RoutineDay>()
     private var clientUid: String? = null
     private var trainerUid: String? = null
@@ -76,7 +76,7 @@ class RoutineTrainerActivity : AppCompatActivity() {
             adapter = routineDayAdapter
         }
 
-        // Permitir eliminar día con pulsación larga
+        // Permitir eliminar día con pulsación larga, no funciona mirar esto otra vez
         binding.rvRutinaSemanal.addOnItemTouchListener(
             object : androidx.recyclerview.widget.RecyclerView.SimpleOnItemTouchListener() {
                 fun onLongPress(e: android.view.MotionEvent) {
@@ -93,9 +93,9 @@ class RoutineTrainerActivity : AppCompatActivity() {
         loadClientRoutine(clientUid!!, trainerUid!!)
         setupBottomNavigationView()
         setupClickListeners()
-        setupAddDayButton() // Nuevo: botón para añadir día
+        setupAddDayButton() //botón para añadir día
 
-        // Botón eliminar rutina (debe estar en el layout con id btnEliminar)
+        // Botón eliminar rutina COMPLETA
         binding.btnEliminar.setOnClickListener {
             androidx.appcompat.app.AlertDialog.Builder(this)
                 .setTitle("Eliminar rutina")
@@ -129,7 +129,7 @@ class RoutineTrainerActivity : AppCompatActivity() {
                         routineDayAdapter.notifyDataSetChanged()
                     }
                 } else {
-                    // No crear días por defecto, solo dejar la lista vacía
+                    // No crear días por defecto, dejar la lista vacía
                     routineDaysList.clear()
                     routineDayAdapter.notifyDataSetChanged()
                 }
@@ -186,7 +186,7 @@ class RoutineTrainerActivity : AppCompatActivity() {
                     clientUid = clientUid!!,
                     trainerUid = trainerUid!!,
                     routineDays = routineDaysList,
-                    published = published // Mantén el valor actual
+                    published = published
                 )
                 routineDocRef.set(routine).await()
             } catch (_: Exception) {}
@@ -194,7 +194,7 @@ class RoutineTrainerActivity : AppCompatActivity() {
     }
 
     private fun navigateToTrainingTrainer(routineDay: RoutineDay) {
-        val intent = Intent(this, TrainingTrainerActivity::class.java) // Asumo TrainingTrainerActivity
+        val intent = Intent(this, TrainingTrainerActivity::class.java)
         intent.putExtra("client_uid", clientUid)
         intent.putExtra("routine_day", routineDay)
         startActivity(intent)
@@ -260,7 +260,7 @@ class RoutineTrainerActivity : AppCompatActivity() {
         clientUid?.let { loadClientRoutine(it, trainerUid ?: "") }
     }
 
-    // Permitir eliminar día con pulsación larga
+    // Permitir eliminar día con pulsación larga, no funciona bien tampoco, volver a mirarlo
     private fun showDeleteDayDialog(position: Int) {
         val day = routineDaysList.getOrNull(position) ?: return
         androidx.appcompat.app.AlertDialog.Builder(this)

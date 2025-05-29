@@ -35,7 +35,7 @@ class MainActivity : AppCompatActivity() {
             return // Salir de onCreate para evitar inflar la vista de selección de rol
         }
 
-        // Si no hay sesión o no coincide con Firebase Auth, mostramos la pantalla de selección de rol
+        // Si no hay sesión o no coincide con Firebase Auth, mostramos el main para seleccionar el rol
         binding.btnClient.setOnClickListener {
             navigateToLogin(ROLE_CLIENT)
         }

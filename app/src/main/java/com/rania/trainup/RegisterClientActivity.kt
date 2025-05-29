@@ -127,7 +127,7 @@ class RegisterClientActivity : AppCompatActivity() {
                                         trainerUid = trainerUid,
                                         uid = uid,
                                         isNew = true,
-                                        role = "CLIENT" // Siempre explícito
+                                        role = "CLIENT"
                                     )
 
                                     firestore.collection("users")

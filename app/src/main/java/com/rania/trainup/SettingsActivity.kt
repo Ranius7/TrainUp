@@ -52,7 +52,7 @@ class SettingsActivity : AppCompatActivity() {
             binding.bottomNavigationClient.visibility = View.VISIBLE
             binding.bottomNavigationTrainer.visibility = View.GONE
             setupBottomNavigationViewClient()
-        } else { // Entrenador
+        } else {
             binding.bottomNavigationTrainer.visibility = View.VISIBLE
             binding.bottomNavigationClient.visibility = View.GONE
             setupBottomNavigationViewTrainer()
@@ -67,12 +67,14 @@ class SettingsActivity : AppCompatActivity() {
         binding.btnChangePassword.setOnClickListener { showChangePasswordDialog() }
         binding.btnLogout.setOnClickListener { logout() }
 
+        //switch notificaciones y modo oscuro, de momento no lo implemento
 //        binding.switchNotifications.setOnCheckedChangeListener { _, isChecked ->
-//            Toast.makeText(this, "Notificaciones: $isChecked (no implementado)", Toast.LENGTH_SHORT).show()
+
 //        }
 //        binding.switchDarkMode.setOnCheckedChangeListener { _, isChecked ->
-//            Toast.makeText(this, "Modo oscuro: $isChecked (no implementado)", Toast.LENGTH_SHORT).show()
+
 //        }
+
     }
 
     private fun showChangeNameDialog() {

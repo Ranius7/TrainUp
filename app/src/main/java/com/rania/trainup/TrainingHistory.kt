@@ -5,7 +5,7 @@ import kotlinx.parcelize.Parcelize
 
 @Parcelize
 data class TrainingHistory(
-    val date: String = "", // Formato "DD MM" o "YYYY-MM-DD"
+    val date: String = "", // Formato "DD MM" o "YYYY-MM-DD" no sé, hay que mirarlo
     val trainingTitle: String = "", // Ej: "Glúteos"
     val durationMinutes: Int = 0,
     val completed: Boolean = false

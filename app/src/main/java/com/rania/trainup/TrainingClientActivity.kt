@@ -45,7 +45,6 @@ class TrainingClientActivity : AppCompatActivity() {
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         binding.toolbarClient.setNavigationOnClickListener { onBackPressedDispatcher.onBackPressed() }
 
-
         currentRoutineDay = intent.getParcelableExtra("routine_day")
 
         if (currentRoutineDay == null) {
@@ -55,9 +54,12 @@ class TrainingClientActivity : AppCompatActivity() {
         }
 
         binding.tvTrainingTitleClient.text = currentRoutineDay!!.muscleGroup
-        binding.tvMaterialClient.text = getString(R.string.material_label, currentRoutineDay!!.exercises.joinToString(", ") { it.material }.ifEmpty { "Ninguno" })
+        binding.tvMaterialClient.text = getString(
+            R.string.material_label,
+            currentRoutineDay!!.exercises.joinToString(", ") { it.material }.ifEmpty { "Ninguno" }
+        )
 
-        exerciseAdapter = ExerciseAdapter(exercisesList, false) // El cliente no edita, isTrainer=false
+        exerciseAdapter = ExerciseAdapter(exercisesList, false)
         binding.rvExercisesClient.apply {
             layoutManager = LinearLayoutManager(this@TrainingClientActivity)
             adapter = exerciseAdapter
@@ -68,9 +70,10 @@ class TrainingClientActivity : AppCompatActivity() {
         exerciseAdapter.notifyDataSetChanged()
 
         // Estado inicial de los botones
+        binding.btnStartTraining.visibility = android.view.View.VISIBLE
         binding.btnStartTraining.isEnabled = true
-        binding.btnFinishTraining.isEnabled = false
-        binding.btnFinishTraining.visibility = android.view.View.INVISIBLE
+        binding.btnFinishTraining.visibility = android.view.View.GONE
+        binding.btnFinishTraining.isEnabled = true
 
         setupClickListeners()
         setupBottomNavigationView()
@@ -80,8 +83,7 @@ class TrainingClientActivity : AppCompatActivity() {
         binding.btnStartTraining.setOnClickListener {
             startTime = System.currentTimeMillis()
             Toast.makeText(this, "Entrenamiento iniciado.", Toast.LENGTH_SHORT).show()
-            binding.btnStartTraining.isEnabled = false
-            binding.btnFinishTraining.isEnabled = true
+            binding.btnStartTraining.visibility = android.view.View.GONE
             binding.btnFinishTraining.visibility = android.view.View.VISIBLE
         }
 
@@ -98,16 +100,14 @@ class TrainingClientActivity : AppCompatActivity() {
             Toast.makeText(this, "Entrenamiento finalizado. Duración: $durationMinutes minutos.", Toast.LENGTH_LONG).show()
 
             startTime = 0L
-            binding.btnStartTraining.isEnabled = true
-            binding.btnFinishTraining.isEnabled = false
-            binding.btnFinishTraining.visibility = android.view.View.INVISIBLE
+            binding.btnStartTraining.visibility = android.view.View.VISIBLE
+            binding.btnFinishTraining.visibility = android.view.View.GONE
         }
-
     }
 
     private fun saveTrainingHistory(durationMinutes: Int) {
         val uid = auth.currentUser?.uid ?: return
-        val dateFormat = SimpleDateFormat("dd MMM yyyy", Locale("es", "ES")) // Formato completo de fecha
+        val dateFormat = SimpleDateFormat("dd MMM yyyy", Locale("es", "ES"))
         val currentDate = dateFormat.format(Date())
 
         val historyEntry = TrainingHistory(
@@ -118,7 +118,7 @@ class TrainingClientActivity : AppCompatActivity() {
         )
 
         firestore.collection("users").document(uid).collection("training_history")
-            .add(historyEntry) // add() genera un ID de documento automático
+            .add(historyEntry)
             .addOnSuccessListener {
                 Toast.makeText(this, "Historial guardado.", Toast.LENGTH_SHORT).show()
             }
@@ -135,9 +135,7 @@ class TrainingClientActivity : AppCompatActivity() {
                     finish()
                     true
                 }
-                R.id.itNavTraining -> {
-                    true // Ya estamos aquí
-                }
+                R.id.itNavTraining -> true
                 R.id.itNavProfile -> {
                     startActivity(Intent(this, ProfileClientActivity::class.java))
                     true

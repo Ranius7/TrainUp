@@ -25,8 +25,8 @@ class TrainingTrainerActivity : AppCompatActivity() {
     private lateinit var exerciseAdapter: ExerciseAdapter
     private val exercisesList = mutableListOf<Exercise>()
     private var clientUid: String? = null
-    private var trainerUid: String? = null // El UID del entrenador actual
-    private var currentRoutineDay: RoutineDay? = null // El día de la rutina que se está editando
+    private var trainerUid: String? = null //  UID del entrenador actual
+    private var currentRoutineDay: RoutineDay? = null // día de la rutina que se está editando
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -62,11 +62,11 @@ class TrainingTrainerActivity : AppCompatActivity() {
 
         binding.tvTituloDia.text = getString(R.string.day_exercise_title, currentRoutineDay!!.dayOfWeek.uppercase(), currentRoutineDay!!.muscleGroup.uppercase())
 
-        // El adaptador para el entrenador: isTrainer=true y se pasa el callback de edición
+        //  adaptador para el entrenador: isTrainer=true y se pasa el callback de edición
         exerciseAdapter = ExerciseAdapter(exercisesList, true) { clickedExercise ->
             showEditExerciseDialog(clickedExercise)
         }
-        binding.rvEjercicios.apply { // Asumo rvEjercicios
+        binding.rvEjercicios.apply {
             layoutManager = LinearLayoutManager(this@TrainingTrainerActivity)
             adapter = exerciseAdapter
         }
@@ -80,17 +80,16 @@ class TrainingTrainerActivity : AppCompatActivity() {
     }
 
     private fun setupClickListeners() {
-        binding.btnAddExercise.setOnClickListener { // Asumo btnAgregarEjercicio
+        binding.btnAddExercise.setOnClickListener {
             showAddExerciseDialog()
         }
-        binding.btnGuardarDia.setOnClickListener { // Asumo btnGuardarEntreno
+        binding.btnGuardarDia.setOnClickListener {
             saveRoutineChanges()
         }
     }
 
     private fun showAddExerciseDialog() {
         val dialogBinding = ItemExerciseTrainerBinding.inflate(layoutInflater)
-        // Asegúrate de que etDescripcion tiene inputType="text" en el layout XML
         AlertDialog.Builder(this)
             .setTitle("Añadir Ejercicio")
             .setView(dialogBinding.root)
@@ -172,7 +171,7 @@ class TrainingTrainerActivity : AppCompatActivity() {
 
         CoroutineScope(Dispatchers.Main).launch {
             try {
-                // Obtener la rutina completa del entrenador para este cliente
+                // Obtener la rutina completa del entrenador para el cliente
                 val routineDocRef = firestore.collection("users").document(trainerUid)
                     .collection("routines").document(clientUid!!)
 

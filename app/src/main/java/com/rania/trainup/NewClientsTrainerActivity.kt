@@ -59,7 +59,6 @@ class NewClientsTrainerActivity : AppCompatActivity() {
     private fun loadNewClients(trainerUid: String) {
         CoroutineScope(Dispatchers.Main).launch {
             try {
-                // ATENCIÓN: En Firestore tu campo es "new", no "isNew"
                 val querySnapshot = firestore.collection("users")
                     .whereEqualTo("role", "CLIENT")
                     .whereEqualTo("trainerUid", trainerUid)
@@ -82,7 +81,7 @@ class NewClientsTrainerActivity : AppCompatActivity() {
     }
 
     private fun navigateToClientDetail(client: Client) {
-        // Actualiza el campo "new" en Firestore y abre el detalle SOLO después de que la actualización se complete
+        // Actualiza el campo "new" en Firestore y abre el detalle solo después de que la actualización se complete
         CoroutineScope(Dispatchers.Main).launch {
             try {
                 firestore.collection("users").document(client.uid).update("new", false).await()

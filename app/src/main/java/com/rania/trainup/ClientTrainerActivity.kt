@@ -1,16 +1,21 @@
 package com.rania.trainup
 
 import android.content.Intent
+import android.icu.text.SimpleDateFormat
 import android.os.Bundle
+import android.widget.EditText
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import com.rania.trainup.com.rania.trainup.DailyTask
 import com.rania.trainup.databinding.ActivityClientTrainerBinding
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
+import java.util.Locale
 
 class ClientTrainerActivity : AppCompatActivity() {
 
@@ -53,6 +58,10 @@ class ClientTrainerActivity : AppCompatActivity() {
         loadClientDetails(clientUid!!)
         setupClickListeners()
         setupBottomNavigationView()
+
+        binding.btnAddDailyTask.setOnClickListener {
+            showAddTaskDialog()
+        }
     }
 
     private fun loadClientDetails(uid: String) {
@@ -63,14 +72,7 @@ class ClientTrainerActivity : AppCompatActivity() {
                     val client = clientDoc.toObject(Client::class.java)
                     client?.let {
                         binding.tvClientName.text = it.name.uppercase()
-                        binding.tvClientInfo.text = it.objective // Muestra el objetivo, ya que la edad la quitamos
-
-                        // Si el cliente es "nuevo" y el entrenador lo ve aquí,
-                        // lo marcamos como "no nuevo" solo si viene de la lista de "nuevos clientes"
-                        // Esto ya se gestiona en NewClientsTrainerActivity, aquí solo lo leemos.
-                        if (it.isNew) {
-                            // Opcional: Aquí podrías mostrar un aviso "Este es un cliente nuevo"
-                        }
+                        binding.tvClientInfo.text = it.objective
                     }
                 } else {
                     Toast.makeText(this@ClientTrainerActivity, "Cliente no encontrado.", Toast.LENGTH_SHORT).show()
@@ -85,14 +87,57 @@ class ClientTrainerActivity : AppCompatActivity() {
 
     private fun setupClickListeners() {
         binding.cardRoutine.setOnClickListener {
-            val intent = Intent(this, RoutineTrainerActivity::class.java) // Asumo RoutineTrainerActivity
+            val intent = Intent(this, RoutineTrainerActivity::class.java)
             intent.putExtra("client_uid", clientUid)
             startActivity(intent)
         }
         binding.cardProgress.setOnClickListener {
-            val intent = Intent(this, ProgressTrainerActivity::class.java) // Asumo ProgressTrainerActivity
+            val intent = Intent(this, ProgressTrainerActivity::class.java)
             intent.putExtra("client_uid", clientUid)
             startActivity(intent)
+        }
+    }
+
+    private fun showAddTaskDialog() {
+        val dialogView = layoutInflater.inflate(R.layout.dialog_add_task, null)
+        val etTitle = dialogView.findViewById<EditText>(R.id.etTaskTitle)
+        val etDesc = dialogView.findViewById<EditText>(R.id.etTaskDescription)
+
+        AlertDialog.Builder(this)
+            .setTitle("Nueva tarea diaria")
+            .setView(dialogView)
+            .setPositiveButton("Guardar") { _, _ ->
+                val title = etTitle.text.toString().trim()
+                val desc = etDesc.text.toString().trim()
+                if (title.isNotEmpty()) {
+                    saveDailyTask(title, desc)
+                } else {
+                    Toast.makeText(this, "El título es obligatorio", Toast.LENGTH_SHORT).show()
+                }
+            }
+            .setNegativeButton("Cancelar", null)
+            .show()
+    }
+
+    private fun saveDailyTask(title: String, desc: String) {
+        val taskId = firestore.collection("users").document(clientUid!!).collection("daily_tasks").document().id
+        val today = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(java.util.Date())
+        val task = DailyTask(
+            id = taskId,
+            title = title,
+            description = desc,
+            date = today,
+            isCompleted = false
+        )
+        CoroutineScope(Dispatchers.Main).launch {
+            try {
+                firestore.collection("users").document(clientUid!!)
+                    .collection("daily_tasks").document(taskId)
+                    .set(task).await()
+                Toast.makeText(this@ClientTrainerActivity, "Tarea añadida", Toast.LENGTH_SHORT).show()
+            } catch (e: Exception) {
+                Toast.makeText(this@ClientTrainerActivity, "Error: ${e.message}", Toast.LENGTH_SHORT).show()
+            }
         }
     }
 

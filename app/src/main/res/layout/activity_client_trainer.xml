@@ -103,6 +103,14 @@
 
             </LinearLayout>
         </androidx.cardview.widget.CardView>
+        <Button
+            android:id="@+id/btnAddDailyTask"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Establecer tareas"
+            android:layout_marginTop="16dp"
+            android:backgroundTint="#6A1B9A"
+            android:textColor="@android:color/white"/>
     </LinearLayout>
 
     <!-- Bottom Navigation -->

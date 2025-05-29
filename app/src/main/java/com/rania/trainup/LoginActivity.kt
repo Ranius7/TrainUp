@@ -19,7 +19,7 @@ class LoginActivity : AppCompatActivity() {
     }
 
     private lateinit var binding: ActivityLoginBinding
-    private var selectedRole: String? = null // Cambiado a selectedRole para evitar confusión con el campo role de la DB
+    private var selectedRole: String? = null
     private lateinit var auth: FirebaseAuth
     private lateinit var firestore: FirebaseFirestore
     private lateinit var sessionManager: SessionManager

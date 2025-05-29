@@ -5,7 +5,7 @@ import android.os.Bundle
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.firestore.FirebaseFirestore // Importar Firestore
+import com.google.firebase.firestore.FirebaseFirestore
 import com.rania.trainup.databinding.ActivityRegisterTrainerBinding
 
 class RegisterTrainerActivity : AppCompatActivity() {
@@ -50,7 +50,7 @@ class RegisterTrainerActivity : AppCompatActivity() {
             return
         }
 
-        // 1. Crear usuario en Firebase Authentication
+        // Crear usuario en Firebase Authentication
         auth.createUserWithEmailAndPassword(email, password)
             .addOnCompleteListener(this) { task ->
                 if (task.isSuccessful) {
@@ -58,8 +58,8 @@ class RegisterTrainerActivity : AppCompatActivity() {
                     val uid = user?.uid
 
                     if (uid != null) {
-                        // 2. Guardar datos adicionales en Firestore
-                        // Forzamos el role a "TRAINER" en mayúsculas
+                        // Guardar datos adicionales en Firestore
+                        // forzar el role a "TRAINER" en mayúsculas
                         val trainer = hashMapOf(
                             "name" to name,
                             "email" to email,

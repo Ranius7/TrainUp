@@ -60,7 +60,6 @@ class ActiveClientsTrainerActivity : AppCompatActivity() {
     private fun loadClients(trainerUid: String) {
         CoroutineScope(Dispatchers.Main).launch {
             try {
-                // ATENCIÓN: En Firestore tu campo es "new", no "isNew"
                 val querySnapshot = firestore.collection("users")
                     .whereEqualTo("role", "CLIENT")
                     .whereEqualTo("trainerUid", trainerUid)

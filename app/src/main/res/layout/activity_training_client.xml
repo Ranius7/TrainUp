@@ -61,8 +61,7 @@
             android:textAllCaps="false"
             android:textColor="@android:color/white"
             android:backgroundTint="@color/purple_trainer"
-            android:layout_marginTop="16dp"
-            android:padding="12dp" />
+            android:padding="12dp"/>
 
         <!-- Botón para finalizar el entrenamiento -->
         <Button
@@ -73,7 +72,6 @@
             android:textAllCaps="false"
             android:textColor="@android:color/white"
             android:backgroundTint="@color/purple_trainer"
-            android:layout_marginTop="8dp"
             android:padding="12dp"
             android:enabled="false" />
 
