@@ -15,6 +15,12 @@
         android:padding="16dp"
         android:gravity="center_vertical">
 
+        <CheckBox
+            android:id="@+id/cbGoal"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:buttonTint="#6A1B9A" />
+
         <TextView
             android:id="@+id/tvGoal"
             android:layout_width="0dp"
@@ -25,10 +31,14 @@
             android:textColor="#111111"
             android:textSize="16sp" />
 
-        <CheckBox
-            android:id="@+id/cbGoal"
+        <ImageButton
+            android:id="@+id/btnDeleteGoal"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:buttonTint="#6A1B9A" />
+            android:src="@android:drawable/ic_menu_delete"
+            android:contentDescription="Eliminar objetivo"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:layout_marginStart="8dp"/>
+
     </LinearLayout>
 </androidx.cardview.widget.CardView>

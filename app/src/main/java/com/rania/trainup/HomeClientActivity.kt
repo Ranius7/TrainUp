@@ -1,5 +1,6 @@
 package com.rania.trainup
 
+import GoalAdapter
 import android.content.Intent
 import android.os.Bundle
 import android.widget.EditText
@@ -46,9 +47,24 @@ class HomeClientActivity : AppCompatActivity() {
         }
 
         // Configurar RecyclerView para objetivos
-        goalAdapter = GoalAdapter(goalsList) { clickedGoal ->
-            toggleGoalCompletion(clickedGoal)
-        }
+        goalAdapter = GoalAdapter(goalsList,
+            onGoalCheckedChange = { goal, isChecked ->
+                toggleGoalCompletion(goal, isChecked)
+            },
+            onGoalDelete = { goal ->
+                val uid = auth.currentUser?.uid ?: return@GoalAdapter
+                CoroutineScope(Dispatchers.Main).launch {
+                    try {
+                        firestore.collection("users").document(uid).collection("goals").document(goal.id).delete().await()
+                        Toast.makeText(this@HomeClientActivity, "Objetivo eliminado", Toast.LENGTH_SHORT).show()
+                        loadGoals(uid)
+                    } catch (e: Exception) {
+                        Toast.makeText(this@HomeClientActivity, "Error al eliminar objetivo: ${e.message}", Toast.LENGTH_SHORT).show()
+                    }
+                }
+            }
+        )
+        binding.rvObjetivos.adapter = goalAdapter
         binding.rvObjetivos.apply { // Asumo rvDailyGoals es el ID de tu RecyclerView
             layoutManager = LinearLayoutManager(this@HomeClientActivity)
             adapter = goalAdapter
@@ -93,13 +109,20 @@ class HomeClientActivity : AppCompatActivity() {
         }
     }
 
-    private fun toggleGoalCompletion(goal: Goal) {
+    private fun toggleGoalCompletion(goal: Goal, isChecked: Boolean) {
         val uid = auth.currentUser?.uid ?: return
-        val updatedGoal = goal.copy(isCompleted = !goal.isCompleted)
+        val updatedGoal = goal.copy(isCompleted = isChecked)
         CoroutineScope(Dispatchers.Main).launch {
             try {
                 firestore.collection("users").document(uid).collection("goals").document(goal.id).set(updatedGoal).await()
-                loadGoals(uid) // Recargar objetivos para actualizar la vista
+                // Actualiza el objetivo en la lista local antes de recargar
+                val index = goalsList.indexOfFirst { it.id == goal.id }
+                if (index != -1) {
+                    goalsList[index] = updatedGoal
+                    goalAdapter.notifyItemChanged(index)
+                }
+                // Opcional: puedes quitar el loadGoals(uid) para evitar el parpadeo
+                // loadGoals(uid)
             } catch (e: Exception) {
                 Toast.makeText(this@HomeClientActivity, "Error al actualizar objetivo: ${e.message}", Toast.LENGTH_SHORT).show()
             }

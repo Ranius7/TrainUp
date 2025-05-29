@@ -1,13 +1,14 @@
-package com.rania.trainup
-
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import com.rania.trainup.Goal
 import com.rania.trainup.databinding.ItemDailyGoalsBinding
 
 class GoalAdapter(
     private val goals: MutableList<Goal>,
-    private val onGoalClick: (Goal) -> Unit // Callback para cuando se haga clic en un objetivo
+    private val onGoalCheckedChange: (Goal, Boolean) -> Unit,
+    private val onGoalDelete: (Goal) -> Unit // Nuevo callback para eliminar
 ) : RecyclerView.Adapter<GoalAdapter.GoalViewHolder>() {
 
     class GoalViewHolder(val binding: ItemDailyGoalsBinding) : RecyclerView.ViewHolder(binding.root)
@@ -20,15 +21,23 @@ class GoalAdapter(
     override fun onBindViewHolder(holder: GoalViewHolder, position: Int) {
         val goal = goals[position]
         holder.binding.tvGoal.text = goal.text
+        holder.binding.cbGoal.setOnCheckedChangeListener(null)
         holder.binding.cbGoal.isChecked = goal.isCompleted
+
         holder.binding.cbGoal.setOnCheckedChangeListener { _, isChecked ->
-            // No actualizamos el modelo aquí directamente, sino a través del callback
-            // La idea es que la Activity/Fragment lo actualice en Firestore y recargue
-            onGoalClick(goal.copy(isCompleted = isChecked))
+            if (goal.isCompleted != isChecked) {
+                onGoalCheckedChange(goal, isChecked)
+            }
         }
+
+        holder.binding.btnDeleteGoal.setOnClickListener {
+            onGoalDelete(goal)
+        }
+
         holder.binding.root.setOnClickListener {
-            // Si el clic en la tarjeta también alterna el estado
-            onGoalClick(goal.copy(isCompleted = !goal.isCompleted))
+            val newChecked = !goal.isCompleted
+            holder.binding.cbGoal.isChecked = newChecked
+            onGoalCheckedChange(goal, newChecked)
         }
     }
 
