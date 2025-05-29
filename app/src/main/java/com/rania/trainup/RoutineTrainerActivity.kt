@@ -176,17 +176,19 @@ class RoutineTrainerActivity : AppCompatActivity() {
 
     private fun saveRoutine() {
         if (clientUid == null || trainerUid == null) return
-        val routine = WeeklyRoutine(
-            clientUid = clientUid!!,
-            trainerUid = trainerUid!!,
-            routineDays = routineDaysList,
-            published = false
-        )
         CoroutineScope(Dispatchers.Main).launch {
             try {
-                firestore.collection("users").document(trainerUid!!)
+                val routineDocRef = firestore.collection("users").document(trainerUid!!)
                     .collection("routines").document(clientUid!!)
-                    .set(routine).await()
+                val snapshot = routineDocRef.get().await()
+                val published = snapshot.getBoolean("published") ?: false
+                val routine = WeeklyRoutine(
+                    clientUid = clientUid!!,
+                    trainerUid = trainerUid!!,
+                    routineDays = routineDaysList,
+                    published = published // Mantén el valor actual
+                )
+                routineDocRef.set(routine).await()
             } catch (_: Exception) {}
         }
     }

@@ -88,6 +88,8 @@ class RegisterTrainerActivity : AppCompatActivity() {
             }
     }
 
+
+
     private fun goToLogin() {
         val intent = Intent(this, LoginActivity::class.java)
         intent.putExtra(LoginActivity.EXTRA_ROLE, MainActivity.ROLE_TRAINER)

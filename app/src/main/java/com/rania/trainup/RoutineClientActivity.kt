@@ -7,6 +7,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.ListenerRegistration
 import com.rania.trainup.databinding.ActivityRoutineClientBinding
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -21,6 +22,7 @@ class RoutineClientActivity : AppCompatActivity() {
     private lateinit var sessionManager: SessionManager
     private lateinit var routineDayAdapter: RoutineDayAdapter
     private val routineDaysList = mutableListOf<RoutineDay>()
+    private var routineListener: ListenerRegistration? = null;
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -44,11 +46,13 @@ class RoutineClientActivity : AppCompatActivity() {
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         binding.toolbarClient.setNavigationOnClickListener { onBackPressedDispatcher.onBackPressed() }
 
-
-        // El adaptador no es para edición, por eso isTrainer=false y se pasa null como onEditClick
-        routineDayAdapter = RoutineDayAdapter(routineDaysList, false, { clickedRoutineDay ->
-            navigateToTrainingClient(clickedRoutineDay)
-        }, null)
+        // INICIALIZA EL ADAPTADOR Y EL RECYCLERVIEW AQUÍ:
+        routineDayAdapter = RoutineDayAdapter(
+            routineDaysList,
+            false,
+            { clickedRoutineDay -> navigateToTrainingClient(clickedRoutineDay) },
+            null
+        )
         binding.rvWeeklyRutineClient.apply {
             layoutManager = LinearLayoutManager(this@RoutineClientActivity)
             adapter = routineDayAdapter
@@ -68,33 +72,48 @@ class RoutineClientActivity : AppCompatActivity() {
                 if (trainerUid != null) {
                     binding.tvTrainingPlanTitle.text = getString(R.string.training_plan_title, clientName ?: "tu")
 
-                    val routinesSnapshot = firestore.collection("users").document(trainerUid)
-                        .collection("routines").document(clientUid) // La rutina específica del cliente
-                        .get().await()
-
-                    if (routinesSnapshot.exists()) {
-                        val weeklyRoutine = routinesSnapshot.toObject(WeeklyRoutine::class.java)
-                        weeklyRoutine?.let {
-                            routineDaysList.clear()
-                            routineDaysList.addAll(it.routineDays)
-                            routineDayAdapter.notifyDataSetChanged()
+                    routineListener?.remove()
+                    routineListener = firestore.collection("users").document(trainerUid)
+                        .collection("routines").document(clientUid)
+                        .addSnapshotListener { snapshot, error ->
+                            if (error != null) {
+                                Toast.makeText(this@RoutineClientActivity, "Error en tiempo real: ${error.message}", Toast.LENGTH_SHORT).show()
+                                return@addSnapshotListener
+                            }
+                            if (snapshot != null && snapshot.exists()) {
+                                val weeklyRoutine = snapshot.toObject(WeeklyRoutine::class.java)
+                                if (weeklyRoutine != null && weeklyRoutine.published) {
+                                    routineDaysList.clear()
+                                    routineDaysList.addAll(weeklyRoutine.routineDays)
+                                    routineDayAdapter.notifyDataSetChanged()
+                                    Toast.makeText(this@RoutineClientActivity, "Días cargados: ${routineDaysList.size}", Toast.LENGTH_SHORT).show()
+                                } else {
+                                    routineDaysList.clear()
+                                    routineDayAdapter.notifyDataSetChanged()
+                                    Toast.makeText(this@RoutineClientActivity, "No hay rutina publicada actualmente.", Toast.LENGTH_SHORT).show()
+                                }
+                            } else {
+                                routineDaysList.clear()
+                                routineDayAdapter.notifyDataSetChanged()
+                                Toast.makeText(this@RoutineClientActivity, "No se encontró una rutina asignada.", Toast.LENGTH_SHORT).show()
+                            }
                         }
-                    } else {
-                        Toast.makeText(this@RoutineClientActivity, "No se encontró una rutina asignada.", Toast.LENGTH_SHORT).show()
-                    }
-
                 } else {
                     Toast.makeText(this@RoutineClientActivity, "Entrenador no asignado o datos incompletos.", Toast.LENGTH_SHORT).show()
                 }
-
             } catch (e: Exception) {
                 Toast.makeText(this@RoutineClientActivity, "Error cargando plan de entrenamiento: ${e.message}", Toast.LENGTH_SHORT).show()
             }
         }
     }
 
+override fun onDestroy() {
+    super.onDestroy()
+    routineListener?.remove()
+    }
+
     private fun navigateToTrainingClient(routineDay: RoutineDay) {
-        val intent = Intent(this, TrainingClientActivity::class.java) // Asumo TrainingClientActivity
+        val intent = Intent(this, TrainingClientActivity::class.java)
         intent.putExtra("routine_day", routineDay) // Pasa el objeto RoutineDay
         startActivity(intent)
     }
@@ -108,7 +127,7 @@ class RoutineClientActivity : AppCompatActivity() {
                     true
                 }
                 R.id.itNavTraining -> {
-                    true // Ya estamos aquí
+                    true // Ya estás aquí, no hagas nada
                 }
                 R.id.itNavProfile -> {
                     startActivity(Intent(this, ProfileClientActivity::class.java))

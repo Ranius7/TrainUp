@@ -122,7 +122,9 @@ class ProfileClientActivity : AppCompatActivity() {
                     true
                 }
                 R.id.itNavTraining -> {
-                    startActivity(Intent(this, TrainingClientActivity::class.java))
+                    // Cambia esto: NO abras TrainingClientActivity directamente
+                    startActivity(Intent(this, RoutineClientActivity::class.java))
+                    finish()
                     true
                 }
                 R.id.itNavProfile -> {

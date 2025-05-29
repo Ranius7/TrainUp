@@ -10,5 +10,6 @@ data class Exercise(
     val series: Int = 0,
     val repetitions: Int = 0,
     val rest: Int = 0, // En segundos
-    val description: String = ""
+    val description: String = "",
+    val stability: Int = 0
 ) : Parcelable

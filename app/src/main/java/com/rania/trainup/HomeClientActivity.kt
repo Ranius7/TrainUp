@@ -113,7 +113,8 @@ class HomeClientActivity : AppCompatActivity() {
                     true // Ya estamos en Home
                 }
                 R.id.itNavTraining -> {
-                    startActivity(Intent(this, TrainingClientActivity::class.java))
+                    // NO HAGAS NADA aquí, o simplemente navega a RoutineClientActivity
+                    startActivity(Intent(this, RoutineClientActivity::class.java))
                     true
                 }
                 R.id.itNavProfile -> {
@@ -130,7 +131,8 @@ class HomeClientActivity : AppCompatActivity() {
             showAddGoalDialog()
         }
         binding.tvTaskTraining.setOnClickListener {
-            startActivity(Intent(this, TrainingClientActivity::class.java))
+             // NO HAGAS NADA aquí, o simplemente navega a RoutineClientActivity
+            startActivity(Intent(this, RoutineClientActivity::class.java))
         }
         binding.tvTaskProgress.setOnClickListener {
             // Mensaje simplificado para progreso
