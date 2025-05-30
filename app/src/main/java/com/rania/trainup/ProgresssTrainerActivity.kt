@@ -70,7 +70,7 @@ class ProgressTrainerActivity : AppCompatActivity() {
             try {
                 val historySnapshot = firestore.collection("users").document(clientUid)
                     .collection("training_history")
-                    .orderBy("date", com.google.firebase.firestore.Query.Direction.DESCENDING) // Ordena por fecha descendente
+                    .orderBy("date", com.google.firebase.firestore.Query.Direction.DESCENDING)
                     .get().await()
 
                 trainingHistoryList.clear()

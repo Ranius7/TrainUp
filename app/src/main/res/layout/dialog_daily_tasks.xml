@@ -4,9 +4,14 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
-    <EditText
-        android:id="@+id/etTaskTitle"
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rvDailyTasks"
+        android:layout_width="match_parent"
+        android:layout_height="200dp"/>
+
+    <Button
+        android:id="@+id/btnAddTask"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Título de la tarea"/>
+        android:text="Añadir tarea"/>
 </LinearLayout>

@@ -4,6 +4,6 @@ data class DailyTask(
     val id: String = "",
     val title: String = "",
     val description: String = "",
-    val date: String = "", // formato yyyy-mm-dd mirar esto
+    val date: String = "",
     val isCompleted: Boolean = false
 )

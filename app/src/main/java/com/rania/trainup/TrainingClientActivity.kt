@@ -127,7 +127,8 @@ class TrainingClientActivity : AppCompatActivity() {
             trainingTitle = currentRoutineDay?.muscleGroup ?: "Entrenamiento",
             durationMinutes = (durationMillis / 1000 / 60).toInt().coerceAtLeast(1),
             durationFormatted = durationString,
-            completed = true
+            completed = true,
+            timestamp = now.time
         )
 
         firestore.collection("users").document(uid).collection("training_history")

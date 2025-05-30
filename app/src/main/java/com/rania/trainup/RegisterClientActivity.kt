@@ -2,6 +2,8 @@ package com.rania.trainup
 
 import android.content.Intent
 import android.os.Bundle
+import android.view.View
+import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -48,32 +50,48 @@ class RegisterClientActivity : AppCompatActivity() {
     private fun loadTrainersForSpinner() {
         CoroutineScope(Dispatchers.Main).launch {
             try {
-                val querySnapshot = firestore.collection("users")
+                val trainersSnapshot = firestore.collection("users")
                     .whereEqualTo("role", "TRAINER")
                     .get()
                     .await()
 
                 trainerNames.clear()
                 trainerUids.clear()
-                for (document in querySnapshot.documents) {
-                    val name = document.getString("name")
-                    val uid = document.id
-                    if (!name.isNullOrEmpty()) {
-                        trainerNames.add(name)
-                        trainerUids.add(uid)
+                val trainerEnabled = mutableListOf<Boolean>()
+
+                for (trainerDoc in trainersSnapshot.documents) {
+                    val trainerName = trainerDoc.getString("name") ?: continue
+                    val trainerUid = trainerDoc.id
+                    val specialty = trainerDoc.getString("specialty") ?: ""
+                    val maxClients = trainerDoc.getLong("maxClients")?.toInt() ?: 0
+
+                    val clientsSnapshot = firestore.collection("users")
+                        .whereEqualTo("role", "CLIENT")
+                        .whereEqualTo("trainerUid", trainerUid)
+                        .get()
+                        .await()
+                    val currentClients = clientsSnapshot.size()
+
+                    // Mostrar nombre + especialidad
+                    val displayName = if (specialty.isNotEmpty()) {
+                        "$trainerName - $specialty"
+                    } else {
+                        trainerName
+                    }
+                    trainerNames.add(displayName + if (currentClients >= maxClients) " (Cupo lleno)" else "")
+                    trainerUids.add(trainerUid)
+                    trainerEnabled.add(currentClients < maxClients)
+                }
+
+                val adapter = object : ArrayAdapter<String>(this@RegisterClientActivity, android.R.layout.simple_spinner_item, trainerNames) {
+                    override fun isEnabled(position: Int): Boolean = trainerEnabled[position]
+                    override fun getDropDownView(position: Int, convertView: View?, parent: ViewGroup): View {
+                        val view = super.getDropDownView(position, convertView, parent)
+                        view.isEnabled = trainerEnabled[position]
+                        view.alpha = if (trainerEnabled[position]) 1.0f else 0.5f
+                        return view
                     }
                 }
-
-                if (trainerNames.isEmpty()) {
-                    trainerNames.add("No hay entrenadores disponibles")
-                    Toast.makeText(this@RegisterClientActivity, "No hay entrenadores registrados. Registra un entrenador primero.", Toast.LENGTH_LONG).show()
-                }
-
-                val adapter = ArrayAdapter(
-                    this@RegisterClientActivity,
-                    android.R.layout.simple_spinner_item,
-                    trainerNames
-                )
                 adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
                 binding.spinnerTrainerSelection.adapter = adapter
 

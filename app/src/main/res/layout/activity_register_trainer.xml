@@ -66,6 +66,15 @@
             android:hint="Contraseña"
             android:inputType="textPassword"
             android:padding="12dp"
+            android:layout_marginBottom="16dp"/>
+
+        <EditText
+            android:id="@+id/etSpecialty"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Especialidad (ej: Fuerza, HIIT, Pilates...)"
+            android:inputType="text"
+            android:padding="12dp"
             android:layout_marginBottom="24dp"/>
 
         <Button

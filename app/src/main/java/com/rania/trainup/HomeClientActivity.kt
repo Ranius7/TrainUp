@@ -75,9 +75,11 @@ class HomeClientActivity : AppCompatActivity() {
         binding.rvObjetivos.layoutManager = LinearLayoutManager(this)
 
         // Tareas del entrenador
-        tareasEntrenadorAdapter = DailyTaskAdapter(tareasEntrenadorList) { task, isChecked ->
-            toggleTaskCompletion(task, isChecked)
-        }
+        tareasEntrenadorAdapter = DailyTaskAdapter(
+            tareasEntrenadorList,
+            onCheckedChange = { task, isChecked -> toggleTaskCompletion(task, isChecked) }
+        )
+
         binding.rvTareasDiarias.adapter = tareasEntrenadorAdapter
         binding.rvTareasDiarias.layoutManager = LinearLayoutManager(this)
 

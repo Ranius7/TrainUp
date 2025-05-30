@@ -35,9 +35,10 @@ class RegisterTrainerActivity : AppCompatActivity() {
         val name = binding.etNameTrainer.text.toString().trim()
         val email = binding.etEmailTrainer.text.toString().trim()
         val password = binding.etPasswordTrainer.text.toString().trim()
+        val specialty = binding.etSpecialty.text.toString().trim()
         val maxClients = binding.etMaxClientes.text.toString().trim().toIntOrNull()
 
-        if (name.isEmpty() || email.isEmpty() || password.isEmpty() || maxClients == null || maxClients <= 0) {
+        if (name.isEmpty() || email.isEmpty() || password.isEmpty() || maxClients == null || maxClients <= 0 || specialty.isEmpty()) {
             Toast.makeText(this, "Completa todos los campos correctamente", Toast.LENGTH_SHORT).show()
             return
         }
@@ -61,10 +62,10 @@ class RegisterTrainerActivity : AppCompatActivity() {
                             "name" to name,
                             "email" to email,
                             "maxClients" to maxClients,
+                            "specialty" to specialty, // NUEVO
                             "uid" to uid,
                             "role" to MainActivity.ROLE_TRAINER
                         )
-
                         firestore.collection("users")
                             .document(uid)
                             .set(trainer)
