@@ -6,43 +6,72 @@
     android:layout_height="wrap_content"
     android:layout_marginBottom="16dp"
     android:elevation="10dp"
-    android:radius="16dp"
+    android:radius="12dp"
     android:backgroundTint="#FFFFFF">
 
-    <LinearLayout
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:padding="20dp">
+        android:padding="16dp">
 
-        <!-- Día de la semana -->
+        <!-- Título: grupo muscular -->
         <TextView
-            android:id="@+id/tvDayClient"
+            android:id="@+id/tvMuscleGroup"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Lunes"
+            android:text="GLÚTEOS"
             android:textSize="18sp"
             android:textStyle="bold"
             android:textColor="#333333" />
 
-        <!-- Grupo muscular o descripción de la rutina para ese día -->
-        <TextView
-            android:id="@+id/tvRutineDayClient"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Glúteos"
-            android:textSize="16sp"
-            android:textColor="#555555"
-            android:layout_marginTop="4dp" />
+        <!-- Botón editar (solo entrenador) -->
+        <!-- Botón editar (solo entrenador) -->
 
-        <!-- Detalle de la rutina: número de ejercicios y series -->
-        <TextView
-            android:id="@+id/tvDetailsRutineClient"
+
+        <!-- Botón eliminar (solo entrenador) -->
+        <ImageButton
+            android:id="@+id/btnDeleteRoutineDay"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="5 ejercicios - 19 series"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:src="@android:drawable/ic_menu_delete"
+            android:contentDescription="Eliminar"
+            android:layout_alignParentEnd="true"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="5dp"/>
+
+        <ImageButton
+            android:id="@+id/btnEditRoutineDay"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:src="@android:drawable/ic_menu_edit"
+            android:contentDescription="Editar"
+            android:layout_toStartOf="@id/btnDeleteRoutineDay"
+            android:layout_marginEnd="8dp"
+            android:layout_marginTop="5dp"/>
+
+        <!-- Comentario opcional -->
+        <TextView
+            android:id="@+id/tvComment"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/tvMuscleGroup"
+            android:text="Comentario opcional"
+            android:textSize="14sp"
+            android:textColor="#555555"
+            android:layout_marginTop="4dp"
+            android:visibility="gone"/>
+
+        <!-- Detalle: número de ejercicios y series -->
+        <TextView
+            android:id="@+id/tvDetails"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/tvComment"
+            android:text="5 ejercicios · 19 series"
             android:textSize="14sp"
             android:textColor="#777777"
             android:layout_marginTop="6dp" />
-    </LinearLayout>
+    </RelativeLayout>
 </androidx.cardview.widget.CardView>

@@ -18,7 +18,8 @@ class RegisterClientActivity : AppCompatActivity() {
     private lateinit var binding: ActivityRegisterClientBinding
     private lateinit var firestore: FirebaseFirestore
     private lateinit var auth: FirebaseAuth
-    private val trainerEmails = mutableListOf<String>()
+    private val trainerNames = mutableListOf<String>()
+    private val trainerUids = mutableListOf<String>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -52,21 +53,26 @@ class RegisterClientActivity : AppCompatActivity() {
                     .get()
                     .await()
 
-                trainerEmails.clear()
+                trainerNames.clear()
+                trainerUids.clear()
                 for (document in querySnapshot.documents) {
-                    val email = document.getString("email")
-                    email?.let { trainerEmails.add(it) }
+                    val name = document.getString("name")
+                    val uid = document.id
+                    if (!name.isNullOrEmpty()) {
+                        trainerNames.add(name)
+                        trainerUids.add(uid)
+                    }
                 }
 
-                if (trainerEmails.isEmpty()) {
-                    trainerEmails.add("No hay entrenadores disponibles")
+                if (trainerNames.isEmpty()) {
+                    trainerNames.add("No hay entrenadores disponibles")
                     Toast.makeText(this@RegisterClientActivity, "No hay entrenadores registrados. Registra un entrenador primero.", Toast.LENGTH_LONG).show()
                 }
 
                 val adapter = ArrayAdapter(
                     this@RegisterClientActivity,
                     android.R.layout.simple_spinner_item,
-                    trainerEmails
+                    trainerNames
                 )
                 adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
                 binding.spinnerTrainerSelection.adapter = adapter
@@ -86,10 +92,12 @@ class RegisterClientActivity : AppCompatActivity() {
         val email = binding.etEmailClient.text.toString().trim()
         val password = binding.etPasswordClient.text.toString().trim()
         val objective = binding.spinnerObjetivo.selectedItem.toString().trim()
-        val selectedTrainerEmail = binding.spinnerTrainerSelection.selectedItem as? String
+        val selectedTrainerName = binding.spinnerTrainerSelection.selectedItem as? String
+        val selectedTrainerIndex = trainerNames.indexOf(selectedTrainerName)
+        val selectedTrainerUid = if (selectedTrainerIndex != -1 && selectedTrainerIndex < trainerUids.size) trainerUids[selectedTrainerIndex] else null
 
         if (name.isEmpty() || email.isEmpty() || password.isEmpty() || objective.isEmpty() ||
-            selectedTrainerEmail.isNullOrEmpty() || selectedTrainerEmail == "No hay entrenadores disponibles") {
+            selectedTrainerName.isNullOrEmpty() || selectedTrainerName == "No hay entrenadores disponibles" || selectedTrainerUid == null) {
             Toast.makeText(this, "Completa todos los campos y selecciona un entrenador válido", Toast.LENGTH_SHORT).show()
             return
         }
@@ -112,41 +120,29 @@ class RegisterClientActivity : AppCompatActivity() {
                     if (uid != null) {
                         CoroutineScope(Dispatchers.Main).launch {
                             try {
-                                val trainerQuery = firestore.collection("users")
-                                    .whereEqualTo("email", selectedTrainerEmail)
-                                    .limit(1)
-                                    .get().await()
+                                val client = Client(
+                                    name = name,
+                                    email = email,
+                                    objective = objective,
+                                    trainerUid = selectedTrainerUid,
+                                    uid = uid,
+                                    isNew = true,
+                                    role = "CLIENT"
+                                )
 
-                                val trainerUid = trainerQuery.documents.firstOrNull()?.id
-
-                                if (trainerUid != null) {
-                                    val client = Client(
-                                        name = name,
-                                        email = email,
-                                        objective = objective,
-                                        trainerUid = trainerUid,
-                                        uid = uid,
-                                        isNew = true,
-                                        role = "CLIENT"
-                                    )
-
-                                    firestore.collection("users")
-                                        .document(uid)
-                                        .set(client)
-                                        .addOnSuccessListener {
-                                            Toast.makeText(this@RegisterClientActivity, "Cliente registrado con éxito", Toast.LENGTH_SHORT).show()
-                                            goToLogin()
-                                        }
-                                        .addOnFailureListener { e ->
-                                            Toast.makeText(this@RegisterClientActivity, "Error al guardar datos del cliente: ${e.message}", Toast.LENGTH_SHORT).show()
-                                            user.delete()
-                                        }
-                                } else {
-                                    Toast.makeText(this@RegisterClientActivity, "Error: No se encontró el entrenador seleccionado.", Toast.LENGTH_SHORT).show()
-                                    user.delete()
-                                }
+                                firestore.collection("users")
+                                    .document(uid)
+                                    .set(client)
+                                    .addOnSuccessListener {
+                                        Toast.makeText(this@RegisterClientActivity, "Cliente registrado con éxito", Toast.LENGTH_SHORT).show()
+                                        goToLogin()
+                                    }
+                                    .addOnFailureListener { e ->
+                                        Toast.makeText(this@RegisterClientActivity, "Error al guardar datos del cliente: ${e.message}", Toast.LENGTH_SHORT).show()
+                                        user.delete()
+                                    }
                             } catch (e: Exception) {
-                                Toast.makeText(this@RegisterClientActivity, "Error al buscar entrenador: ${e.message}", Toast.LENGTH_SHORT).show()
+                                Toast.makeText(this@RegisterClientActivity, "Error al guardar cliente: ${e.message}", Toast.LENGTH_SHORT).show()
                                 user.delete()
                             }
                         }

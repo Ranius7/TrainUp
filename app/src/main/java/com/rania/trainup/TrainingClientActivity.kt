@@ -43,6 +43,7 @@ class TrainingClientActivity : AppCompatActivity() {
 
         setSupportActionBar(binding.toolbarClient)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        supportActionBar?.title = "PLAN DE ENTRENAMIENTO"
         binding.toolbarClient.setNavigationOnClickListener { onBackPressedDispatcher.onBackPressed() }
 
         currentRoutineDay = intent.getParcelableExtra("routine_day")
@@ -53,21 +54,19 @@ class TrainingClientActivity : AppCompatActivity() {
             return
         }
 
-        binding.tvTrainingTitleClient.text = currentRoutineDay!!.muscleGroup
+        binding.tvMuscleGroupTitle.text = currentRoutineDay?.muscleGroup?.uppercase() ?: ""
         binding.tvMaterialClient.text = getString(
             R.string.material_label,
             currentRoutineDay!!.exercises.joinToString(", ") { it.material }.ifEmpty { "Ninguno" }
         )
 
+        exercisesList.clear()
+        exercisesList.addAll(currentRoutineDay!!.exercises)
         exerciseAdapter = ExerciseAdapter(exercisesList, false)
         binding.rvExercisesClient.apply {
             layoutManager = LinearLayoutManager(this@TrainingClientActivity)
             adapter = exerciseAdapter
         }
-
-        exercisesList.clear()
-        exercisesList.addAll(currentRoutineDay!!.exercises)
-        exerciseAdapter.notifyDataSetChanged()
 
         // Estado inicial de los botones
         binding.btnStartTraining.visibility = android.view.View.VISIBLE
@@ -94,10 +93,22 @@ class TrainingClientActivity : AppCompatActivity() {
             }
             val endTime = System.currentTimeMillis()
             val durationMillis = endTime - startTime
-            val durationMinutes = (durationMillis / 1000 / 60).toInt().coerceAtLeast(1)
 
-            saveTrainingHistory(durationMinutes)
-            Toast.makeText(this, "Entrenamiento finalizado. Duración: $durationMinutes minutos.", Toast.LENGTH_LONG).show()
+            // Formatea la duración
+            val hours = (durationMillis / (1000 * 60 * 60)).toInt()
+            val minutes = ((durationMillis / (1000 * 60)) % 60).toInt()
+            val seconds = ((durationMillis / 1000) % 60).toInt()
+            val durationString = buildString {
+                if (hours > 0) append("${hours}h ")
+                if (minutes > 0 || hours > 0) append("${minutes} min ")
+                append("${seconds} seg")
+            }.trim()
+
+            saveTrainingHistory(durationMillis, durationString)
+            Toast.makeText(this, "Entrenamiento finalizado. Duración: $durationString.", Toast.LENGTH_LONG).show()
+
+            // Desmarcar todos los ejercicios
+            exerciseAdapter.uncheckAll()
 
             startTime = 0L
             binding.btnStartTraining.visibility = android.view.View.VISIBLE
@@ -105,15 +116,17 @@ class TrainingClientActivity : AppCompatActivity() {
         }
     }
 
-    private fun saveTrainingHistory(durationMinutes: Int) {
+    private fun saveTrainingHistory(durationMillis: Long, durationString: String) {
         val uid = auth.currentUser?.uid ?: return
+        val now = Date()
         val dateFormat = SimpleDateFormat("dd MMM yyyy", Locale("es", "ES"))
-        val currentDate = dateFormat.format(Date())
+        val currentDate = dateFormat.format(now).uppercase(Locale("es", "ES"))
 
         val historyEntry = TrainingHistory(
-            date = currentDate.uppercase(Locale.getDefault()),
+            date = currentDate,
             trainingTitle = currentRoutineDay?.muscleGroup ?: "Entrenamiento",
-            durationMinutes = durationMinutes,
+            durationMinutes = (durationMillis / 1000 / 60).toInt().coerceAtLeast(1),
+            durationFormatted = durationString,
             completed = true
         )
 

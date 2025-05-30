@@ -2,7 +2,6 @@ package com.rania.trainup
 
 import android.content.Intent
 import android.os.Bundle
-import android.widget.EditText
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
@@ -55,12 +54,12 @@ class TrainingTrainerActivity : AppCompatActivity() {
             finish()
             return
         }
-
-        setSupportActionBar(binding.toolbarEntreno) // Asumo toolbarEntreno
+        setSupportActionBar(binding.toolbarEntreno)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        supportActionBar?.title = "EJERCICIOS"
         binding.toolbarEntreno.setNavigationOnClickListener { onBackPressedDispatcher.onBackPressed() }
 
-        binding.tvTituloDia.text = getString(R.string.day_exercise_title, currentRoutineDay!!.dayOfWeek.uppercase(), currentRoutineDay!!.muscleGroup.uppercase())
+        binding.tvTituloDia.text = currentRoutineDay!!.routineName.uppercase()
 
         //  adaptador para el entrenador: isTrainer=true y se pasa el callback de edición
         exerciseAdapter = ExerciseAdapter(exercisesList, true) { clickedExercise ->
@@ -98,11 +97,12 @@ class TrainingTrainerActivity : AppCompatActivity() {
                 val material = dialogBinding.etMaterial.text.toString().trim()
                 val series = dialogBinding.etSeries.text.toString().toIntOrNull() ?: 0
                 val repetitions = dialogBinding.etRepeticiones.text.toString().toIntOrNull() ?: 0
-                val rest = dialogBinding.etDescanso.text.toString().toIntOrNull() ?: 0
+                val rest = dialogBinding.etDescanso.text.toString().trim()
                 val description = dialogBinding.etDescripcion.text.toString().trim() // <-- libre
 
                 if (name.isNotEmpty() && series > 0 && repetitions > 0) {
-                    val newExercise = Exercise(name, material, series, repetitions, rest, description)
+                    val newExercise = Exercise(name, material, series, repetitions,
+                        rest.toString(), description)
                     exercisesList.add(newExercise)
                     exerciseAdapter.notifyDataSetChanged()
                 } else {
@@ -131,11 +131,12 @@ class TrainingTrainerActivity : AppCompatActivity() {
                 val material = dialogBinding.etMaterial.text.toString().trim()
                 val series = dialogBinding.etSeries.text.toString().toIntOrNull() ?: 0
                 val repetitions = dialogBinding.etRepeticiones.text.toString().toIntOrNull() ?: 0
-                val rest = dialogBinding.etDescanso.text.toString().toIntOrNull() ?: 0
+                val rest = dialogBinding.etDescanso.text.toString().trim()
                 val description = dialogBinding.etDescripcion.text.toString().trim()
 
                 if (name.isNotEmpty() && series > 0 && repetitions > 0) {
-                    val updatedExercise = Exercise(name, material, series, repetitions, rest, description)
+                    val updatedExercise = Exercise(name, material, series, repetitions,
+                        rest.toString(), description)
                     val index = exercisesList.indexOf(exercise)
                     if (index != -1) {
                         exercisesList[index] = updatedExercise
@@ -180,7 +181,7 @@ class TrainingTrainerActivity : AppCompatActivity() {
                     val weeklyRoutine = routineSnapshot.toObject(WeeklyRoutine::class.java)
                     weeklyRoutine?.let {
                         val updatedDays = it.routineDays.toMutableList()
-                        val index = updatedDays.indexOfFirst { day -> day.dayOfWeek == updatedRoutineDay.dayOfWeek }
+                        val index = updatedDays.indexOfFirst { day -> day.routineName == updatedRoutineDay.routineName }
                         if (index != -1) {
                             updatedDays[index] = updatedRoutineDay
                         } else {

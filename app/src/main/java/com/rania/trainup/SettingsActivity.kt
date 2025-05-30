@@ -2,6 +2,7 @@ package com.rania.trainup
 
 import android.content.Intent
 import android.os.Bundle
+import android.text.InputType
 import android.view.View
 import android.widget.EditText
 import android.widget.Toast
@@ -14,6 +15,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
+import com.google.firebase.auth.EmailAuthProvider
 
 class SettingsActivity : AppCompatActivity() {
 
@@ -44,8 +46,10 @@ class SettingsActivity : AppCompatActivity() {
             return
         }
 
+        // Toolbar igual que en el resto de pantallas y título en mayúsculas
         setSupportActionBar(binding.toolbarSettings)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        supportActionBar?.title = "AJUSTES"
         binding.toolbarSettings.setNavigationOnClickListener { onBackPressedDispatcher.onBackPressed() }
 
         if (currentUserRole == MainActivity.ROLE_CLIENT) {
@@ -59,23 +63,100 @@ class SettingsActivity : AppCompatActivity() {
         }
 
         setupClickListeners()
+
     }
 
     private fun setupClickListeners() {
         binding.btnChangeName.setOnClickListener { showChangeNameDialog() }
-        binding.btnChangeEmail.setOnClickListener { showChangeEmailDialog() }
         binding.btnChangePassword.setOnClickListener { showChangePasswordDialog() }
         binding.btnLogout.setOnClickListener { logout() }
-
-        //switch notificaciones y modo oscuro, de momento no lo implemento
-//        binding.switchNotifications.setOnCheckedChangeListener { _, isChecked ->
-
-//        }
-//        binding.switchDarkMode.setOnCheckedChangeListener { _, isChecked ->
-
-//        }
-
+        binding.btnDeleteAccount.setOnClickListener { showDeleteAccountDialog() }
     }
+
+    private fun showDeleteAccountDialog() {
+        AlertDialog.Builder(this)
+            .setTitle("Eliminar cuenta")
+            .setMessage("¿Seguro que quieres eliminar tu cuenta? Esta acción no se puede deshacer.")
+            .setPositiveButton("Eliminar") { dialog, _ ->
+                showReauthDialogAndDeleteAccount()
+                dialog.dismiss()
+            }
+            .setNegativeButton("Cancelar") { dialog, _ -> dialog.dismiss() }
+            .show()
+    }
+
+    private fun showReauthDialogAndDeleteAccount() {
+        val builder = AlertDialog.Builder(this)
+        builder.setTitle("Confirma tu contraseña")
+        val input = EditText(this)
+        input.hint = "Contraseña actual"
+        input.inputType = android.text.InputType.TYPE_TEXT_VARIATION_PASSWORD
+        builder.setView(input)
+
+        builder.setPositiveButton("Confirmar") { dialog, _ ->
+            val currentPassword = input.text.toString()
+            reauthenticateAndDeleteAccount(currentPassword)
+            dialog.dismiss()
+        }
+        builder.setNegativeButton("Cancelar") { dialog, _ -> dialog.cancel() }
+        builder.show()
+    }
+
+    private fun reauthenticateAndDeleteAccount(currentPassword: String) {
+        val user = auth.currentUser ?: return
+        val email = user.email ?: return
+        val credential = EmailAuthProvider.getCredential(email, currentPassword)
+
+        user.reauthenticate(credential)
+            .addOnCompleteListener { reauthTask ->
+                if (reauthTask.isSuccessful) {
+                    // Primero elimina de Firestore
+                    val uid = currentUserUid ?: return@addOnCompleteListener
+                    CoroutineScope(Dispatchers.Main).launch {
+                        try {
+                            firestore.collection("users").document(uid).delete().await()
+                            // Luego elimina de Auth
+                            user.delete()
+                                .addOnCompleteListener { task ->
+                                    if (task.isSuccessful) {
+                                        sessionManager.clearSession()
+                                        val intent =
+                                            Intent(this@SettingsActivity, MainActivity::class.java)
+                                        intent.flags =
+                                            Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                                        startActivity(intent)
+                                        finish()
+                                        Toast.makeText(
+                                            this@SettingsActivity,
+                                            "Cuenta eliminada.",
+                                            Toast.LENGTH_SHORT
+                                        ).show()
+                                    } else {
+                                        Toast.makeText(
+                                            this@SettingsActivity,
+                                            "Error al eliminar cuenta: ${task.exception?.message}",
+                                            Toast.LENGTH_LONG
+                                        ).show()
+                                    }
+                                }
+                        } catch (e: Exception) {
+                            Toast.makeText(
+                                this@SettingsActivity,
+                                "Error al eliminar datos: ${e.message}",
+                                Toast.LENGTH_LONG
+                            ).show()
+                        }
+                    }
+                } else {
+                    Toast.makeText(
+                        this,
+                        "Reautenticación fallida: ${reauthTask.exception?.message}",
+                        Toast.LENGTH_LONG
+                    ).show()
+                }
+            }
+    }
+
 
     private fun showChangeNameDialog() {
         val builder = AlertDialog.Builder(this)
@@ -109,61 +190,18 @@ class SettingsActivity : AppCompatActivity() {
         }
     }
 
-    private fun showChangeEmailDialog() {
-        val builder = AlertDialog.Builder(this)
-        builder.setTitle("Cambiar Email")
-        val input = EditText(this)
-        input.hint = "Nuevo correo electrónico"
-        input.inputType = android.text.InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS
-        builder.setView(input)
-
-        builder.setPositiveButton("Guardar") { dialog, _ ->
-            val newEmail = input.text.toString().trim()
-            if (android.util.Patterns.EMAIL_ADDRESS.matcher(newEmail).matches()) {
-                updateUserEmail(newEmail)
-            } else {
-                Toast.makeText(this, "Introduce un email válido", Toast.LENGTH_SHORT).show()
-            }
-            dialog.dismiss()
-        }
-        builder.setNegativeButton("Cancelar") { dialog, _ -> dialog.cancel() }
-        builder.show()
-    }
-
-    private fun updateUserEmail(newEmail: String) {
-        val user = auth.currentUser ?: return
-        val uid = currentUserUid ?: return
-
-        user.updateEmail(newEmail)
-            .addOnCompleteListener { authTask ->
-                if (authTask.isSuccessful) {
-                    CoroutineScope(Dispatchers.Main).launch {
-                        try {
-                            firestore.collection("users").document(uid).update("email", newEmail).await()
-                            sessionManager.saveSession(newEmail, currentUserRole!!, uid)
-                            Toast.makeText(this@SettingsActivity, "Email actualizado.", Toast.LENGTH_SHORT).show()
-                        } catch (e: Exception) {
-                            Toast.makeText(this@SettingsActivity, "Error al actualizar email en DB: ${e.message}", Toast.LENGTH_SHORT).show()
-                        }
-                    }
-                } else {
-                    Toast.makeText(this@SettingsActivity, "Error al cambiar email en Auth: ${authTask.exception?.message}", Toast.LENGTH_LONG).show()
-                }
-            }
-    }
-
     private fun showChangePasswordDialog() {
         val builder = AlertDialog.Builder(this)
         builder.setTitle("Cambiar Contraseña")
         val input = EditText(this)
         input.hint = "Nueva contraseña (mínimo 6 caracteres)"
-        input.inputType = android.text.InputType.TYPE_TEXT_VARIATION_PASSWORD
+        input.inputType = InputType.TYPE_TEXT_VARIATION_PASSWORD
         builder.setView(input)
 
         builder.setPositiveButton("Guardar") { dialog, _ ->
             val newPassword = input.text.toString().trim()
             if (newPassword.length >= 6) {
-                updateUserPassword(newPassword)
+                showReauthDialogAndChangePassword(newPassword)
             } else {
                 Toast.makeText(this, "La contraseña debe tener al menos 6 caracteres", Toast.LENGTH_SHORT).show()
             }
@@ -173,18 +211,45 @@ class SettingsActivity : AppCompatActivity() {
         builder.show()
     }
 
-    private fun updateUserPassword(newPassword: String) {
-        val user = auth.currentUser ?: return
+    private fun showReauthDialogAndChangePassword(newPassword: String) {
+        val builder = AlertDialog.Builder(this)
+        builder.setTitle("Introduce tu contraseña actual")
+        val input = EditText(this)
+        input.hint = "Contraseña actual"
+        input.inputType = InputType.TYPE_TEXT_VARIATION_PASSWORD
+        builder.setView(input)
 
-        user.updatePassword(newPassword)
-            .addOnCompleteListener { task ->
-                if (task.isSuccessful) {
-                    Toast.makeText(this, "Contraseña actualizada.", Toast.LENGTH_SHORT).show()
+        builder.setPositiveButton("Confirmar") { dialog, _ ->
+            val currentPassword = input.text.toString()
+            reauthenticateAndChangePassword(currentPassword, newPassword)
+            dialog.dismiss()
+        }
+        builder.setNegativeButton("Cancelar") { dialog, _ -> dialog.cancel() }
+        builder.show()
+    }
+
+    private fun reauthenticateAndChangePassword(currentPassword: String, newPassword: String) {
+        val user = auth.currentUser ?: return
+        val email = user.email ?: return
+        val credential = EmailAuthProvider.getCredential(email, currentPassword)
+
+        user.reauthenticate(credential)
+            .addOnCompleteListener { reauthTask ->
+                if (reauthTask.isSuccessful) {
+                    user.updatePassword(newPassword)
+                        .addOnCompleteListener { task ->
+                            if (task.isSuccessful) {
+                                Toast.makeText(this, "Contraseña actualizada.", Toast.LENGTH_SHORT).show()
+                            } else {
+                                Toast.makeText(this, "${task.exception?.message}", Toast.LENGTH_LONG).show()
+                            }
+                        }
                 } else {
-                    Toast.makeText(this, "Error al cambiar contraseña: ${task.exception?.message}", Toast.LENGTH_LONG).show()
+                    Toast.makeText(this, "Reautenticación fallida: ${reauthTask.exception?.message}", Toast.LENGTH_LONG).show()
                 }
             }
     }
+
 
     private fun logout() {
         auth.signOut()
@@ -227,10 +292,11 @@ class SettingsActivity : AppCompatActivity() {
                 }
                 R.id.nav_clients -> {
                     startActivity(Intent(this, ActiveClientsTrainerActivity::class.java))
+                    finish()
                     true
                 }
                 R.id.nav_settings -> {
-                    true // Ya estamos aquí
+                    true
                 }
                 else -> false
             }

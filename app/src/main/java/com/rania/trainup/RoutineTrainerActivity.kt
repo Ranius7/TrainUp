@@ -1,5 +1,6 @@
 package com.rania.trainup
 
+import RoutineDayAdapter
 import android.content.Intent
 import android.os.Bundle
 import android.widget.Toast
@@ -52,44 +53,58 @@ class RoutineTrainerActivity : AppCompatActivity() {
 
         setSupportActionBar(binding.toolbarRutina)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        supportActionBar?.title = "RUTINA SEMANAL"
         binding.toolbarRutina.setNavigationOnClickListener { onBackPressedDispatcher.onBackPressed() }
 
         // Adaptador para el entrenador: isTrainer=true y se pasa onEditClick
         routineDayAdapter = RoutineDayAdapter(
             routineDaysList,
             true,
-            onItemClick = { clickedRoutineDay ->
-                // Al hacer clic en un día, navegar a la edición de ejercicios de ese día
+            onClick = { clickedRoutineDay ->
+                // Aquí puedes navegar a los ejercicios si quieres
                 navigateToTrainingTrainer(clickedRoutineDay)
             },
             onEditClick = { routineDayToEdit ->
-                // Si clicó en el icono de editar específicamente
-                navigateToTrainingTrainer(routineDayToEdit)
+                // Mostrar diálogo para editar el nombre de la rutina
+                val editText = android.widget.EditText(this)
+                editText.setText(routineDayToEdit.muscleGroup)
+                editText.hint = "Nuevo nombre de rutina"
+                androidx.appcompat.app.AlertDialog.Builder(this)
+                    .setTitle("Editar nombre de rutina")
+                    .setView(editText)
+                    .setPositiveButton("Guardar") { dialog, _ ->
+                        val newName = editText.text.toString().trim()
+                        if (newName.isNotEmpty()) {
+                            val index = routineDaysList.indexOf(routineDayToEdit)
+                            if (index != -1) {
+                                val updatedDay = routineDayToEdit.copy(
+                                    muscleGroup = newName,
+                                    routineName = newName // si quieres que routineName también cambie
+                                )
+                                routineDaysList[index] = updatedDay
+                                routineDayAdapter.notifyItemChanged(index)
+                                saveRoutine()
+                            }
+                        } else {
+                            Toast.makeText(this, "El nombre no puede estar vacío", Toast.LENGTH_SHORT).show()
+                        }
+                        dialog.dismiss()
+                    }
+                    .setNegativeButton("Cancelar") { dialog, _ -> dialog.cancel() }
+                    .show()
             },
-            onDeleteClick = { position ->
-                // Si clicó en el icono de eliminar
-                showDeleteDayDialog(position)
+            onDeleteClick = { routineDayToDelete ->
+                val position = routineDaysList.indexOf(routineDayToDelete)
+                if (position != -1) showDeleteDayDialog(position)
             }
         )
+
         binding.rvRutinaSemanal.apply {
             layoutManager = LinearLayoutManager(this@RoutineTrainerActivity)
             adapter = routineDayAdapter
         }
 
-        // Permitir eliminar día con pulsación larga, no funciona mirar esto otra vez
-        binding.rvRutinaSemanal.addOnItemTouchListener(
-            object : androidx.recyclerview.widget.RecyclerView.SimpleOnItemTouchListener() {
-                fun onLongPress(e: android.view.MotionEvent) {
-                    val child = binding.rvRutinaSemanal.findChildViewUnder(e.x, e.y)
-                    if (child != null) {
-                        val position = binding.rvRutinaSemanal.getChildAdapterPosition(child)
-                        showDeleteDayDialog(position)
-                    }
-                }
-            }
-        )
-
-        // No crear días automáticamente, solo cargar los existentes
+       // No crear días automáticamente, solo cargar los existentes
         loadClientRoutine(clientUid!!, trainerUid!!)
         setupBottomNavigationView()
         setupClickListeners()
@@ -163,8 +178,8 @@ class RoutineTrainerActivity : AppCompatActivity() {
 
     private fun addRoutineDay(dayName: String) {
         val newDay = RoutineDay(
-            dayOfWeek = dayName,
-            muscleGroup = "",
+            routineName = dayName,
+            muscleGroup = dayName,
             exercises = emptyList(),
             numExercises = 0,
             numSets = 0
@@ -265,7 +280,7 @@ class RoutineTrainerActivity : AppCompatActivity() {
         val day = routineDaysList.getOrNull(position) ?: return
         androidx.appcompat.app.AlertDialog.Builder(this)
             .setTitle("Eliminar día")
-            .setMessage("¿Seguro que quieres eliminar el día \"${day.dayOfWeek}\"?")
+            .setMessage("¿Seguro que quieres eliminar el día \"${day.routineName}\"?")
             .setPositiveButton("Eliminar") { dialog, _ ->
                 routineDaysList.removeAt(position)
                 routineDayAdapter.notifyDataSetChanged()

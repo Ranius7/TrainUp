@@ -9,7 +9,8 @@ data class Exercise(
     val material: String = "",
     val series: Int = 0,
     val repetitions: Int = 0,
-    val rest: Int = 0, // en segundos, lo quiero en minutos y segundos mirar esto
+    val rest: String = "",
     val description: String = "",
-    val stability: Int = 0
+    val stability: Int = 0,
+    var isChecked: Boolean = false
 ) : Parcelable

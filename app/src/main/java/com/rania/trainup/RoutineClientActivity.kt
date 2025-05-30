@@ -1,5 +1,6 @@
 package com.rania.trainup
 
+import RoutineDayAdapter
 import android.content.Intent
 import android.os.Bundle
 import android.widget.Toast
@@ -22,7 +23,7 @@ class RoutineClientActivity : AppCompatActivity() {
     private lateinit var sessionManager: SessionManager
     private lateinit var routineDayAdapter: RoutineDayAdapter
     private val routineDaysList = mutableListOf<RoutineDay>()
-    private var routineListener: ListenerRegistration? = null;
+    private var routineListener: ListenerRegistration? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -44,6 +45,7 @@ class RoutineClientActivity : AppCompatActivity() {
 
         setSupportActionBar(binding.toolbarClient)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        supportActionBar?.title = "PLAN DE ENTRENAMIENTO"
         binding.toolbarClient.setNavigationOnClickListener { onBackPressedDispatcher.onBackPressed() }
 
         routineDayAdapter = RoutineDayAdapter(
@@ -57,6 +59,8 @@ class RoutineClientActivity : AppCompatActivity() {
             adapter = routineDayAdapter
         }
 
+        binding.bottomNavigationClient.selectedItemId = R.id.itNavTraining
+
         loadClientTrainingPlan(uid)
         setupBottomNavigationView()
     }
@@ -68,9 +72,11 @@ class RoutineClientActivity : AppCompatActivity() {
                 val trainerUid = clientDoc.getString("trainerUid")
                 val clientName = clientDoc.getString("name")
 
-                if (trainerUid != null) {
-                    binding.tvTrainingPlanTitle.text = getString(R.string.training_plan_title, clientName ?: "tu")
+                // Aquí el cambio pedido:
+                val nombreCliente = (clientName ?: "CLIENTE").uppercase()
+                binding.tvPlanEntrenamientoCliente.text = "PLAN DE ENTRENAMIENTO DE $nombreCliente"
 
+                if (trainerUid != null) {
                     routineListener?.remove()
                     routineListener = firestore.collection("users").document(trainerUid)
                         .collection("routines").document(clientUid)
@@ -106,14 +112,14 @@ class RoutineClientActivity : AppCompatActivity() {
         }
     }
 
-override fun onDestroy() {
-    super.onDestroy()
-    routineListener?.remove()
+    override fun onDestroy() {
+        super.onDestroy()
+        routineListener?.remove()
     }
 
     private fun navigateToTrainingClient(routineDay: RoutineDay) {
         val intent = Intent(this, TrainingClientActivity::class.java)
-        intent.putExtra("routine_day", routineDay) // pasar el objeto RoutineDay
+        intent.putExtra("routine_day", routineDay)
         startActivity(intent)
     }
 
@@ -126,7 +132,7 @@ override fun onDestroy() {
                     true
                 }
                 R.id.itNavTraining -> {
-                    true // ya estamos aqui, no se hace nada
+                    true
                 }
                 R.id.itNavProfile -> {
                     startActivity(Intent(this, ProfileClientActivity::class.java))
@@ -141,7 +147,7 @@ override fun onDestroy() {
         super.onResume()
         val (email, role, uid) = sessionManager.getSession()
         if (uid != null && role == MainActivity.ROLE_CLIENT) {
-            loadClientTrainingPlan(uid) // Recargar la rutina por si el entrenador la actualizó
+            loadClientTrainingPlan(uid)
         }
     }
 }

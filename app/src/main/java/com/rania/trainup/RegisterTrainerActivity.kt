@@ -50,7 +50,6 @@ class RegisterTrainerActivity : AppCompatActivity() {
             return
         }
 
-        // Crear usuario en Firebase Authentication
         auth.createUserWithEmailAndPassword(email, password)
             .addOnCompleteListener(this) { task ->
                 if (task.isSuccessful) {
@@ -58,14 +57,12 @@ class RegisterTrainerActivity : AppCompatActivity() {
                     val uid = user?.uid
 
                     if (uid != null) {
-                        // Guardar datos adicionales en Firestore
-                        // forzar el role a "TRAINER" en mayúsculas
                         val trainer = hashMapOf(
                             "name" to name,
                             "email" to email,
                             "maxClients" to maxClients,
                             "uid" to uid,
-                            "role" to MainActivity.ROLE_TRAINER // Esto es "TRAINER"
+                            "role" to MainActivity.ROLE_TRAINER
                         )
 
                         firestore.collection("users")
@@ -77,7 +74,7 @@ class RegisterTrainerActivity : AppCompatActivity() {
                             }
                             .addOnFailureListener { e ->
                                 Toast.makeText(this, "Error al guardar datos del entrenador: ${e.message}", Toast.LENGTH_SHORT).show()
-                                user.delete() // Si falla Firestore, borramos el usuario de Auth
+                                user.delete()
                             }
                     } else {
                         Toast.makeText(this, "Error al obtener UID del usuario.", Toast.LENGTH_SHORT).show()

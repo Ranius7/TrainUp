@@ -43,9 +43,22 @@ class HomeTrainerActivity : AppCompatActivity() {
             return
         }
 
-        // recyclerView para nuevos clientes
         newClientsAdapter = NewClientAdapter(newClientsList) { clickedClient ->
-            navigateToClientDetail(clickedClient)
+            CoroutineScope(Dispatchers.Main).launch {
+                try {
+                    firestore.collection("users").document(clickedClient.uid).update("new", false).await()
+                    val index = newClientsList.indexOfFirst { it.uid == clickedClient.uid }
+                    if (index != -1) {
+                        newClientsList.removeAt(index)
+                        newClientsAdapter.notifyItemRemoved(index)
+                    }
+                    binding.cvNewClients.visibility = if (newClientsList.isEmpty()) android.view.View.GONE else android.view.View.VISIBLE
+
+                    navigateToClientDetail(clickedClient)
+                } catch (e: Exception) {
+                    Toast.makeText(this@HomeTrainerActivity, "Error al actualizar estado de cliente: ${e.message}", Toast.LENGTH_SHORT).show()
+                }
+            }
         }
         binding.rvNewClients.apply {
             layoutManager = LinearLayoutManager(this@HomeTrainerActivity)

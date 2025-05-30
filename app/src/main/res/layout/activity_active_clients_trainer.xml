@@ -9,10 +9,10 @@
     <com.google.android.material.appbar.MaterialToolbar
         android:id="@+id/toolbarAllClients"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:title="@string/client_all_clients_title"
-        app:navigationIcon="@drawable/ic_arrow_back"
-        app:titleCentered="true"/>
+        android:layout_height="?attr/actionBarSize"
+        android:background="@color/white"
+        app:titleTextColor="@color/black"
+        app:navigationIcon="@drawable/ic_arrow_back"/>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rvAllActiveClients"

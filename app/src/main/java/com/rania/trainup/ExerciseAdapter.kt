@@ -7,8 +7,8 @@ import com.rania.trainup.databinding.ItemExerciseBinding
 
 class ExerciseAdapter(
     private val exercises: MutableList<Exercise>,
-    private val isTrainer: Boolean, // Para saber si es el entrenador quien ve la lista
-    private val onEditClick: ((Exercise) -> Unit)? = null // Callback para editar (solo entrenador)
+    private val isTrainer: Boolean, // para saber si es el entrenador quien ve la lista
+    private val onEditClick: ((Exercise) -> Unit)? = null //  para editar (solo entrenador)
 ) : RecyclerView.Adapter<ExerciseAdapter.ExerciseViewHolder>() {
 
     class ExerciseViewHolder(val binding: ItemExerciseBinding) : RecyclerView.ViewHolder(binding.root)
@@ -21,11 +21,21 @@ class ExerciseAdapter(
     override fun onBindViewHolder(holder: ExerciseViewHolder, position: Int) {
         val exercise = exercises[position]
         holder.binding.tvExerciseNameClient.text = exercise.name
-        holder.binding.tvExerciseDetailsClient.text = "${exercise.series} series · ${exercise.repetitions} reps · ${exercise.rest} segundos descanso"
+        holder.binding.tvExerciseDetailsClient.text = "${exercise.series} series · ${exercise.repetitions} reps · ${exercise.rest} descanso"
         holder.binding.tvMaterialClient.text = "Material: ${exercise.material.ifEmpty { "Ninguno" }}"
         holder.binding.tvDescriptionClient.text = "Descripción: ${exercise.description.ifEmpty { "N/A" }}"
 
-        // El botón de editar solo es visible y funciona si es el entrenador
+        // Checkbox solo visible para el cliente
+        holder.binding.cbExerciseDone.visibility = if (isTrainer) android.view.View.GONE else android.view.View.VISIBLE
+
+        // Sincroniza el estado del checkbox con el modelo
+        holder.binding.cbExerciseDone.setOnCheckedChangeListener(null)
+        holder.binding.cbExerciseDone.isChecked = exercise.isChecked
+        holder.binding.cbExerciseDone.setOnCheckedChangeListener { _, isChecked ->
+            exercise.isChecked = isChecked
+        }
+
+        // Botón editar solo para entrenador
         if (isTrainer && onEditClick != null) {
             holder.binding.btnEditExercise.visibility = android.view.View.VISIBLE
             holder.binding.btnEditExercise.setOnClickListener {
@@ -41,6 +51,11 @@ class ExerciseAdapter(
     fun updateExercises(newExercises: List<Exercise>) {
         exercises.clear()
         exercises.addAll(newExercises)
+        notifyDataSetChanged()
+    }
+
+    fun uncheckAll() {
+        exercises.forEach { it.isChecked = false }
         notifyDataSetChanged()
     }
 }

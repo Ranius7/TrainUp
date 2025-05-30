@@ -26,10 +26,10 @@
 
         <!-- Título del entreno -->
         <TextView
-            android:id="@+id/tvTrainingTitleClient"
+            android:id="@+id/tvMuscleGroupTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Glúteos"
+            android:text="Nombre de la rutina"
             android:textSize="24sp"
             android:textStyle="bold"
             android:textColor="@color/black"

@@ -42,6 +42,7 @@ class ActiveClientsTrainerActivity : AppCompatActivity() {
 
         setSupportActionBar(binding.toolbarAllClients)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        supportActionBar?.title = "CLIENTES"
         binding.toolbarAllClients.setNavigationOnClickListener { onBackPressedDispatcher.onBackPressed() }
 
 

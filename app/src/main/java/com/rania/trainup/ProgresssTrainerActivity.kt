@@ -23,6 +23,7 @@ class ProgressTrainerActivity : AppCompatActivity() {
     private val trainingHistoryList = mutableListOf<TrainingHistory>()
     private var clientUid: String? = null
 
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityProgressTrainerBinding.inflate(layoutInflater)
@@ -59,26 +60,29 @@ class ProgressTrainerActivity : AppCompatActivity() {
             adapter = historyAdapter
         }
 
-        loadClientProgress(clientUid!!)
+        loadClientTrainingHistory(clientUid!!)
         setupBottomNavigationView()
     }
 
-    private fun loadClientProgress(uid: String) {
+
+    private fun loadClientTrainingHistory(clientUid: String) {
         CoroutineScope(Dispatchers.Main).launch {
             try {
-                val clientDoc = firestore.collection("users").document(uid).get().await()
-                if (clientDoc.exists()) {
-                    val clientName = clientDoc.getString("name") ?: "Cliente"
-                    binding.tvProgressTitle.text = "PROGRESO DE ${clientName.uppercase()}"
+                val historySnapshot = firestore.collection("users").document(clientUid)
+                    .collection("training_history")
+                    .orderBy("date", com.google.firebase.firestore.Query.Direction.DESCENDING) // Ordena por fecha descendente
+                    .get().await()
 
-                    loadTrainingHistory(uid)
-                } else {
-                    Toast.makeText(this@ProgressTrainerActivity, "Datos de cliente no encontrados.", Toast.LENGTH_SHORT).show()
-                    finish()
+                trainingHistoryList.clear()
+                for (doc in historySnapshot.documents) {
+                    doc.toObject(TrainingHistory::class.java)?.let { trainingHistoryList.add(it) }
+                }
+                historyAdapter.notifyDataSetChanged()
+                if (trainingHistoryList.isEmpty()) {
+                    Toast.makeText(this@ProgressTrainerActivity, "Este cliente aún no tiene historial.", Toast.LENGTH_SHORT).show()
                 }
             } catch (e: Exception) {
-                Toast.makeText(this@ProgressTrainerActivity, "Error al cargar progreso del cliente: ${e.message}", Toast.LENGTH_SHORT).show()
-                finish()
+                Toast.makeText(this@ProgressTrainerActivity, "Error al cargar historial: ${e.message}", Toast.LENGTH_SHORT).show()
             }
         }
     }

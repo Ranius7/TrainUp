@@ -15,12 +15,10 @@
         <com.google.android.material.appbar.MaterialToolbar
             android:id="@+id/toolbarClientDetail"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="@android:color/white"
-            android:title="Cliente"
-            android:titleTextColor="@android:color/black"
-            app:navigationIcon="@drawable/ic_arrow_back"
-            app:titleCentered="true" />
+            android:layout_height="?attr/actionBarSize"
+            android:background="@color/white"
+            app:titleTextColor="@color/black"
+            app:navigationIcon="@drawable/ic_arrow_back"/>
     </com.google.android.material.appbar.AppBarLayout>
 
     <!-- Contenedor principal debajo del toolbar -->
@@ -38,7 +36,7 @@
             android:id="@+id/tvClientName"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="RANIA"
+            android:text="CLIENTE"
             android:textSize="24sp"
             android:textStyle="bold"
             android:textColor="@android:color/black"
@@ -69,9 +67,10 @@
                 android:orientation="vertical">
 
                 <TextView
+                    android:id="@+id/tvCardRoutineTitle"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="GESTIONAR RUTINAS DE RANIA"
+                    android:text="GESTIONAR RUTINAS DE CLIENTE"
                     android:textSize="18sp"
                     android:textColor="@android:color/black"
                     android:textStyle="bold" />
@@ -94,9 +93,10 @@
                 android:orientation="vertical">
 
                 <TextView
+                    android:id="@+id/tvCardProgressTitle"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="VER PROGRESO DE RANIA"
+                    android:text="VER HISTORIAL DE CLIENTE"
                     android:textSize="18sp"
                     android:textColor="@android:color/black"
                     android:textStyle="bold" />

@@ -8,37 +8,13 @@
 
     <!-- Toolbar arriba con usuario y ajustes -->
     <androidx.appcompat.widget.Toolbar
-        android:id="@+id/profileToolbar"
+        android:id="@+id/toolbarProfile"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
         android:background="@color/white"
+        app:titleTextColor="@color/black"
         app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
-        app:menu="@menu/profile_menu">
-
-        <FrameLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
-
-            <ImageView
-                android:id="@+id/ivUserIconClient"
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:layout_gravity="start|center_vertical"
-                android:layout_marginStart="16dp"
-                android:src="@drawable/ic_user"
-                android:contentDescription="Usuario" />
-
-            <TextView
-                android:id="@+id/tvToolbarTitleClient"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:text="RANIA"
-                android:textStyle="bold"
-                android:textSize="20sp"
-                android:textColor="@color/black" />
-        </FrameLayout>
-    </androidx.appcompat.widget.Toolbar>
+        app:menu="@menu/profile_menu"/>
 
     <!-- Línea separadora -->
     <View
@@ -58,16 +34,6 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-            <!-- Toolbar -->
-            <com.google.android.material.appbar.MaterialToolbar
-                android:id="@+id/toolbarNewClients"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@color/white"
-                app:navigationIcon="@drawable/ic_arrow_back"
-                android:layout_marginBottom="12dp"
-                app:titleCentered="true"/>
-
             <!-- Historial de entrenamientos -->
             <TextView
                 android:layout_width="wrap_content"
@@ -84,12 +50,9 @@
                 android:layout_height="wrap_content"
                 app:cardElevation="10dp"
                 app:cardCornerRadius="12dp"
-                android:padding="8dp"
-                android:layout_marginBottom="32dp">
+                android:padding="8dp"/>
 
-                <include layout="@layout/training_history_recycler" />
-
-            </androidx.cardview.widget.CardView>
+            <include layout="@layout/training_history_recycler" />
 
         </LinearLayout>
     </ScrollView>

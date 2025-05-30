@@ -43,8 +43,8 @@
             android:id="@+id/etDescanso"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Descanso"
-            android:inputType="number" />
+            android:hint="Descanso (ej: 1min 30seg)"
+            android:inputType="text" />
 
         <EditText
             android:id="@+id/etDescripcion"

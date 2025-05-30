@@ -1,83 +1,90 @@
-<?xml version="1.0" encoding="utf-8"?>
-<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <!-- Contenido principal con scroll -->
-    <ScrollView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:fillViewport="true"
-        android:layout_above="@id/bottomNavigationTrainer">
+    <!-- Toolbar -->
+    <com.google.android.material.appbar.MaterialToolbar
+        android:id="@+id/toolbarRutina"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:titleCentered="true"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
 
-        <LinearLayout
-            android:orientation="vertical"
+    <!-- Título debajo del toolbar -->
+    <TextView
+        android:id="@+id/tvTituloRutina"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Rutina de Cliente"
+        android:textSize="22sp"
+        android:textStyle="bold"
+        android:layout_marginTop="16dp"
+        android:layout_marginStart="16dp"
+        app:layout_constraintTop_toBottomOf="@id/toolbarRutina"
+        app:layout_constraintStart_toStartOf="parent"/>
+
+    <LinearLayout
+        android:id="@+id/layoutRoutineButtons"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:padding="16dp"
+        android:background="@android:color/white"
+        android:elevation="8dp"
+        app:layout_constraintBottom_toTopOf="@id/bottomNavigationTrainer"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <Button
+            android:id="@+id/btnAddDay"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:padding="16dp">
+            android:layout_weight="2"
+            android:layout_marginEnd="5dp"
+            android:text="Añadir rutina"
+            android:layout_marginBottom="12dp"/>
 
-            <com.google.android.material.appbar.MaterialToolbar
-                android:id="@+id/toolbarRutina"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                app:titleCentered="true"/>
+        <Button
+            android:id="@+id/btnPublicarRutina"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="2"
+            android:layout_marginEnd="5dp"
+            android:text="Publicar rutina"
+            android:layout_marginBottom="12dp"/>
 
-            <TextView
-                android:id="@+id/tvTituloRutina"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Rutina de [Cliente]"
-                android:textSize="22sp"
-                android:textStyle="bold"
-                android:layout_marginTop="16dp"
-                android:layout_marginBottom="12dp"/>
+        <Button
+            android:id="@+id/btnEliminar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="2"
+            android:layout_marginEnd="5dp"
+            android:text="Eliminar todo"
+            android:layout_marginBottom="0dp"/>
+    </LinearLayout>
 
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/rvRutinaSemanal"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="12dp"
-                android:nestedScrollingEnabled="false"/>
-
-            <!-- Botones siempre al final del scroll -->
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:layout_marginBottom="80dp">
-
-                <Button
-                    android:id="@+id/btnAddDay"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="Añadir rutina"
-                    android:layout_marginBottom="12dp"/>
-
-                <Button
-                    android:id="@+id/btnPublicarRutina"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="Publicar rutina"
-                    android:layout_marginBottom="12dp"/>
-
-                <Button
-                    android:id="@+id/btnEliminar"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="Eliminar rutina"
-                    android:layout_marginBottom="12dp"/>
-            </LinearLayout>
-
-        </LinearLayout>
-    </ScrollView>
+    <!-- RecyclerView ocupa el espacio entre el título y los botones -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rvRutinaSemanal"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintTop_toBottomOf="@id/tvTituloRutina"
+        app:layout_constraintBottom_toTopOf="@id/layoutRoutineButtons"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
 
     <!-- Barra de navegación fija abajo -->
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/bottomNavigationTrainer"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_width="0dp"
+        android:layout_height="56dp"
         android:layout_gravity="bottom"
-        app:menu="@menu/bottom_nav_menu_trainer"/>
+        app:menu="@menu/bottom_nav_menu_trainer"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
 
-</androidx.coordinatorlayout.widget.CoordinatorLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

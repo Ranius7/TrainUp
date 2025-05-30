@@ -4,6 +4,7 @@ import android.content.Intent
 import android.icu.text.SimpleDateFormat
 import android.os.Bundle
 import android.widget.EditText
+import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
@@ -53,6 +54,7 @@ class ClientTrainerActivity : AppCompatActivity() {
 
         setSupportActionBar(binding.toolbarClientDetail)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        supportActionBar?.title = "DETALLES DEL CLIENTE"
         binding.toolbarClientDetail.setNavigationOnClickListener { onBackPressedDispatcher.onBackPressed() }
 
         loadClientDetails(clientUid!!)
@@ -71,8 +73,13 @@ class ClientTrainerActivity : AppCompatActivity() {
                 if (clientDoc.exists()) {
                     val client = clientDoc.toObject(Client::class.java)
                     client?.let {
-                        binding.tvClientName.text = it.name.uppercase()
+                        val nombreCliente = it.name.uppercase()
+                        binding.tvClientName.text = nombreCliente
                         binding.tvClientInfo.text = it.objective
+
+                        // Cambia los textos de los CardView
+                        binding.tvCardRoutineTitle.findViewById<TextView>(R.id.tvCardRoutineTitle)?.text = "GESTIONAR RUTINAS DE $nombreCliente"
+                        binding.tvCardProgressTitle.findViewById<TextView>(R.id.tvCardProgressTitle)?.text = "VER HISTORIAL DE $nombreCliente"
                     }
                 } else {
                     Toast.makeText(this@ClientTrainerActivity, "Cliente no encontrado.", Toast.LENGTH_SHORT).show()

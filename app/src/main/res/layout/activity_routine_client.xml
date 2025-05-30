@@ -24,17 +24,7 @@
         android:padding="16dp">
 
         <!-- Título del plan de entrenamiento -->
-        <TextView
-            android:id="@+id/tvTrainingPlanTitle"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="PLAN DE ENTRENAMIENTO"
-            android:textColor="@color/black"
-            android:textSize="20sp"
-            android:textStyle="bold"
-            android:background="#C1B3EB"
-            android:padding="10dp"
-            android:layout_marginBottom="12dp"/>
+
 
         <!-- Card con imagen y título del plan de entrenamiento -->
         <androidx.cardview.widget.CardView
@@ -57,6 +47,7 @@
 
                 <!-- Título superpuesto al final de la imagen -->
                 <TextView
+                    android:id="@+id/tvPlanEntrenamientoCliente"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="PLAN DE ENTRENAMIENTO DE RANIA"

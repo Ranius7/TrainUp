@@ -42,6 +42,7 @@ class NewClientsTrainerActivity : AppCompatActivity() {
 
         setSupportActionBar(binding.toolbarNewClients)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        supportActionBar?.title = "NUEVOS CLIENTES"
         binding.toolbarNewClients.setNavigationOnClickListener { onBackPressedDispatcher.onBackPressed() }
 
         newClientsAdapter = NewClientAdapter(newClientsList) { clickedClient ->

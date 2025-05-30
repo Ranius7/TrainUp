@@ -11,12 +11,10 @@
     <com.google.android.material.appbar.MaterialToolbar
         android:id="@+id/toolbarSettings"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="?attr/actionBarSize"
         android:background="@color/white"
-        android:title="Ajustes"
         app:titleTextColor="@color/black"
-        app:navigationIcon="@drawable/ic_arrow_back"
-        app:titleCentered="true" />
+        app:navigationIcon="@drawable/ic_arrow_back"/>
 
     <!-- Contenido -->
     <ScrollView
@@ -37,36 +35,14 @@
             android:dividerPadding="8dp"
             android:showDividers="middle">
 
-            <!-- General -->
-<!--            <TextView-->
-<!--                android:layout_width="wrap_content"-->
-<!--                android:layout_height="wrap_content"-->
-<!--                android:layout_marginStart="10dp"-->
-<!--                android:paddingBottom="8dp"-->
-<!--                android:text="General" />-->
-
-<!--            <com.google.android.material.materialswitch.MaterialSwitch-->
-<!--                android:id="@+id/switchNotifications"-->
-<!--                android:layout_width="match_parent"-->
-<!--                android:layout_height="20dp"-->
-<!--                android:text="Notificaciones"-->
-<!--                android:layout_marginStart="10dp" />-->
-
-<!--            <com.google.android.material.materialswitch.MaterialSwitch-->
-<!--                android:id="@+id/switchDarkMode"-->
-<!--                android:layout_width="match_parent"-->
-<!--                android:layout_height="20dp"-->
-<!--                android:text="Modo oscuro"-->
-<!--                android:layout_marginStart="10dp" />-->
-
             <!-- Cuenta -->
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textSize="30dp"
                 android:textStyle="bold"
-                android:layout_marginTop="20dp"
                 android:layout_marginStart="8dp"
+                android:layout_marginBottom="10dp"
                 android:paddingBottom="8dp"
                 android:text="Cuenta"/>
 
@@ -76,13 +52,6 @@
                 android:layout_height="wrap_content"
                 android:backgroundTint="#B189F4"
                 android:text="Cambiar nombre" />
-
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/btnChangeEmail"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:backgroundTint="#B189F4"
-                android:text="Cambiar email" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnChangePassword"
@@ -96,9 +65,18 @@
                 android:id="@+id/btnLogout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="50dp"
-                android:backgroundTint="#C4A62E2C"
+                android:layout_marginTop="20dp"
+                android:backgroundTint="#C4A91C19"
                 android:text="Cerrar sesión" />
+
+            <Button
+                android:id="@+id/btnDeleteAccount"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Eliminar cuenta"
+                android:textColor="@android:color/white"
+                android:backgroundTint="#C4A91C19"/>
+
 
         </LinearLayout>
     </ScrollView>

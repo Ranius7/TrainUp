@@ -14,14 +14,12 @@
         <com.google.android.material.appbar.MaterialToolbar
             android:id="@+id/toolbarProgress"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="@android:color/white"
-            android:title="Progreso de Rania"
-            android:titleTextColor="@android:color/black"
-            app:navigationIcon="@drawable/ic_arrow_back" />
+            android:layout_height="?attr/actionBarSize"
+            android:background="@color/white"
+            app:titleTextColor="@color/black"
+            app:navigationIcon="@drawable/baseline_arrow_back_24"/>
     </com.google.android.material.appbar.AppBarLayout>
 
-    <!-- Scrollable Content -->
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -37,19 +35,7 @@
             android:showDividers="middle"
             android:dividerPadding="16dp">
 
-            <!-- Título -->
-            <TextView
-                android:id="@+id/tvProgressTitle"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="PROGRESO DE RANIA"
-                android:textSize="24sp"
-                android:textStyle="bold"
-                android:textColor="@android:color/black"
-                android:layout_marginBottom="24dp" />
 
-
-            <!-- Historial de entrenamientos -->
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -59,14 +45,11 @@
                 android:textColor="@android:color/black"
                 android:layout_marginBottom="40dp" />
 
-            <!-- Aquí incluimos el layout reusable -->
             <include layout="@layout/training_history_recycler" />
-
 
         </LinearLayout>
     </ScrollView>
 
-    <!-- Bottom Navigation -->
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/bottomNavigationTrainer"
         android:layout_width="match_parent"

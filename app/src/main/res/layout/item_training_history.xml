@@ -24,7 +24,7 @@
             android:layout_marginBottom="4dp" />
 
         <TextView
-            android:id="@+id/tvTrainingTitleClient"
+            android:id="@+id/tvMuscleGroupTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="🏋️‍♀️ GLÚTEOS | ENTRENAMIENTO COMPLETADO"

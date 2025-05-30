@@ -4,6 +4,7 @@ import GoalAdapter
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
+import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
@@ -79,6 +80,8 @@ class HomeClientActivity : AppCompatActivity() {
         }
         binding.rvTareasDiarias.adapter = tareasEntrenadorAdapter
         binding.rvTareasDiarias.layoutManager = LinearLayoutManager(this)
+
+        binding.bottomNavigationClient.selectedItemId = R.id.itNavHome
 
         loadClientData(uid)
         setupBottomNavigationView()
@@ -225,25 +228,31 @@ class HomeClientActivity : AppCompatActivity() {
     }
 
     private fun showAddGoalDialog() {
-        val builder = AlertDialog.Builder(this)
-        builder.setTitle("Añadir Nuevo Objetivo")
-        val input = EditText(this)
-        input.hint = "Ej: Correr 5km"
-        builder.setView(input)
+        val dialogView = layoutInflater.inflate(R.layout.dialog_add_goal, null)
+        val etGoal = dialogView.findViewById<EditText>(R.id.etGoal)
+        val btnCancel = dialogView.findViewById<Button>(R.id.btnCancel)
+        val btnAdd = dialogView.findViewById<Button>(R.id.btnAdd)
 
-        builder.setPositiveButton("Añadir") { dialog, _ ->
-            val goalText = input.text.toString().trim()
-            if (goalText.isNotEmpty()) {
-                addGoal(goalText)
-            } else {
-                Toast.makeText(this, "El objetivo no puede estar vacío", Toast.LENGTH_SHORT).show()
-            }
+        val dialog = AlertDialog.Builder(this)
+            .setView(dialogView)
+            .setCancelable(false)
+            .create()
+
+        btnCancel.setOnClickListener {
             dialog.dismiss()
         }
-        builder.setNegativeButton("Cancelar") { dialog, _ ->
-            dialog.cancel()
+
+        btnAdd.setOnClickListener {
+            val goalText = etGoal.text.toString().trim()
+            if (goalText.isNotEmpty()) {
+                addGoal(goalText)
+                dialog.dismiss()
+            } else {
+                etGoal.error = "El objetivo no puede estar vacío"
+            }
         }
-        builder.show()
+
+        dialog.show()
     }
 
     private fun addGoal(goalText: String) {

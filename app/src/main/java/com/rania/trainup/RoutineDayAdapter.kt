@@ -1,53 +1,56 @@
-package com.rania.trainup
-
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
+import com.rania.trainup.RoutineDay
 import com.rania.trainup.databinding.ItemRoutineDayBinding
-import com.rania.trainup.databinding.ItemRoutineDayTrainerBinding
 
 class RoutineDayAdapter(
-    private val items: List<RoutineDay>,
+    private val routineDays: List<RoutineDay>,
     private val isTrainer: Boolean,
-    private val onItemClick: (RoutineDay) -> Unit,
+    private val onClick: (RoutineDay) -> Unit,
     private val onEditClick: ((RoutineDay) -> Unit)? = null,
-    private val onDeleteClick: ((Int) -> Unit)? = null
-) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+    private val onDeleteClick: ((RoutineDay) -> Unit)? = null
+) : RecyclerView.Adapter<RoutineDayAdapter.RoutineDayViewHolder>() {
 
-    class ClientViewHolder(val binding: ItemRoutineDayBinding) : RecyclerView.ViewHolder(binding.root)
-    class TrainerViewHolder(val binding: ItemRoutineDayTrainerBinding) : RecyclerView.ViewHolder(binding.root)
+    inner class RoutineDayViewHolder(val binding: ItemRoutineDayBinding) : RecyclerView.ViewHolder(binding.root)
 
-    override fun getItemViewType(position: Int): Int = if (isTrainer) 1 else 0
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RoutineDayViewHolder {
+        val binding = ItemRoutineDayBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        return RoutineDayViewHolder(binding)
+    }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
-        return if (viewType == 1) {
-            val binding = ItemRoutineDayTrainerBinding.inflate(LayoutInflater.from(parent.context), parent, false)
-            TrainerViewHolder(binding)
+    override fun onBindViewHolder(holder: RoutineDayViewHolder, position: Int) {
+        val routineDay = routineDays[position]
+        // Título: grupo muscular
+        holder.binding.tvMuscleGroup.text = routineDay.muscleGroup.uppercase()
+
+        // Comentario opcional
+        if (!routineDay.comment.isNullOrBlank()) {
+            holder.binding.tvComment.text = routineDay.comment
+            holder.binding.tvComment.visibility = View.VISIBLE
         } else {
-            val binding = ItemRoutineDayBinding.inflate(LayoutInflater.from(parent.context), parent, false)
-            ClientViewHolder(binding)
+            holder.binding.tvComment.visibility = View.GONE
         }
+
+        // Número de ejercicios y series
+        val numEjercicios = routineDay.exercises.size
+        val numSeries = routineDay.exercises.sumOf { it.series }
+        holder.binding.tvDetails.text = "$numEjercicios ejercicios · $numSeries series"
+
+        // Botones solo para entrenador
+        if (isTrainer) {
+            holder.binding.btnEditRoutineDay.visibility = View.VISIBLE
+            holder.binding.btnDeleteRoutineDay.visibility = View.VISIBLE
+            holder.binding.btnEditRoutineDay.setOnClickListener { onEditClick?.invoke(routineDay) }
+            holder.binding.btnDeleteRoutineDay.setOnClickListener { onDeleteClick?.invoke(routineDay) }
+        } else {
+            holder.binding.btnEditRoutineDay.visibility = View.GONE
+            holder.binding.btnDeleteRoutineDay.visibility = View.GONE
+        }
+
+        holder.itemView.setOnClickListener { onClick(routineDay) }
     }
 
-    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-        val day = items[position]
-        if (holder is TrainerViewHolder) {
-            holder.binding.tvDay.text = "${day.dayOfWeek}: ${day.muscleGroup}"
-            holder.binding.btnEditarDia.visibility = if (onEditClick != null) View.VISIBLE else View.GONE
-            holder.binding.btnEditarDia.setOnClickListener { onEditClick?.invoke(day) }
-            holder.binding.btnEliminarDia.setOnClickListener { onDeleteClick?.invoke(position) }
-            holder.binding.root.setOnClickListener {
-                Toast.makeText(holder.binding.root.context, "Click en ${day.dayOfWeek}", Toast.LENGTH_SHORT).show()
-                onItemClick(day) }
-        } else if (holder is ClientViewHolder) {
-            holder.binding.tvDayClient.text = day.dayOfWeek
-            holder.binding.tvRutineDayClient.text = day.muscleGroup
-            holder.binding.tvDetailsRutineClient.text = "${day.numExercises} ejercicios - ${day.numSets} series"
-            holder.binding.root.setOnClickListener { onItemClick(day) }
-        }
-    }
-
-    override fun getItemCount(): Int = items.size
+    override fun getItemCount(): Int = routineDays.size
 }
