@@ -22,7 +22,6 @@
         android:orientation="vertical"
         android:padding="16dp">
 
-        <!-- Nombre del ejercicio -->
         <TextView
             android:id="@+id/tvExerciseNameClient"
             android:layout_width="wrap_content"
@@ -33,7 +32,6 @@
             android:textColor="#111111"
             android:layout_marginBottom="8dp" />
 
-        <!-- Detalles del ejercicio -->
         <TextView
             android:id="@+id/tvExerciseDetailsClient"
             android:layout_width="wrap_content"
@@ -43,7 +41,6 @@
             android:textColor="#555555"
             android:layout_marginBottom="4dp" />
 
-        <!-- Material necesario -->
         <TextView
             android:id="@+id/tvMaterialClient"
             android:layout_width="wrap_content"
@@ -53,7 +50,6 @@
             android:textColor="#555555"
             android:layout_marginBottom="4dp" />
 
-        <!-- Descripción del ejercicio -->
         <TextView
             android:id="@+id/tvDescriptionClient"
             android:layout_width="wrap_content"
@@ -63,7 +59,6 @@
             android:textColor="#555555"
             android:layout_marginBottom="4dp" />
 
-        <!-- Botón de editar (visible solo para entrenador) -->
         <Button
             android:id="@+id/btnEditExercise"
             android:layout_width="wrap_content"

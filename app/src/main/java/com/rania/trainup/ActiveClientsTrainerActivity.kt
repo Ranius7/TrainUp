@@ -54,6 +54,9 @@ class ActiveClientsTrainerActivity : AppCompatActivity() {
             adapter = allClientAdapter
         }
 
+        binding.bottomNavigationTrainer.selectedItemId = R.id.nav_clients
+
+
         loadClients(uid)
         setupBottomNavigationView()
     }
@@ -64,7 +67,7 @@ class ActiveClientsTrainerActivity : AppCompatActivity() {
                 val querySnapshot = firestore.collection("users")
                     .whereEqualTo("role", "CLIENT")
                     .whereEqualTo("trainerUid", trainerUid)
-                    .whereEqualTo("new", false) // <-- CAMBIA "isNew" por "new"
+                    .whereEqualTo("new", false)
                     .get()
                     .await()
 
@@ -97,7 +100,7 @@ class ActiveClientsTrainerActivity : AppCompatActivity() {
                     true
                 }
                 R.id.nav_clients -> {
-                    true // Ya estamos aquí
+                    true
                 }
                 R.id.nav_settings -> {
                     startActivity(Intent(this, SettingsActivity::class.java))
@@ -112,7 +115,7 @@ class ActiveClientsTrainerActivity : AppCompatActivity() {
         super.onResume()
         val (email, role, uid) = sessionManager.getSession()
         if (uid != null && role == MainActivity.ROLE_TRAINER) {
-            loadClients(uid) // Refrescar clientes activos al volver
+            loadClients(uid)
         }
     }
 }

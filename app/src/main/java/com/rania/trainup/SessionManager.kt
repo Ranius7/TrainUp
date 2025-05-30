@@ -22,7 +22,7 @@ class SessionManager(context: Context) {
         }
     }
 
-    fun getSession(): Triple<String?, String?, String?> { // Devuelve email, rol, UID
+    fun getSession(): Triple<String?, String?, String?> {
         val email = prefs.getString(KEY_EMAIL, null)
         val role = prefs.getString(KEY_ROLE, null)
         val uid = prefs.getString(KEY_UID, null)

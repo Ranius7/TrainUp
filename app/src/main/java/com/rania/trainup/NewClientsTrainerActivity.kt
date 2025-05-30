@@ -53,6 +53,9 @@ class NewClientsTrainerActivity : AppCompatActivity() {
             adapter = newClientsAdapter
         }
 
+        binding.bottomNavigationTrainer.selectedItemId = R.id.nav_clients
+
+
         loadNewClients(uid)
         setupBottomNavigationView()
     }
@@ -63,7 +66,7 @@ class NewClientsTrainerActivity : AppCompatActivity() {
                 val querySnapshot = firestore.collection("users")
                     .whereEqualTo("role", "CLIENT")
                     .whereEqualTo("trainerUid", trainerUid)
-                    .whereEqualTo("new", true) // <-- CAMBIA "isNew" por "new"
+                    .whereEqualTo("new", true)
                     .get()
                     .await()
 
@@ -82,15 +85,12 @@ class NewClientsTrainerActivity : AppCompatActivity() {
     }
 
     private fun navigateToClientDetail(client: Client) {
-        // Actualiza el campo "new" en Firestore y abre el detalle solo después de que la actualización se complete
         CoroutineScope(Dispatchers.Main).launch {
             try {
                 firestore.collection("users").document(client.uid).update("new", false).await()
-                // Abrir el detalle después de que el cambio esté en Firestore
                 val intent = Intent(this@NewClientsTrainerActivity, ClientTrainerActivity::class.java)
                 intent.putExtra("client_uid", client.uid)
                 startActivity(intent)
-                // Recargar la lista de nuevos clientes tras volver del detalle (en onResume ya se recarga)
             } catch (e: Exception) {
                 Toast.makeText(this@NewClientsTrainerActivity, "Error al actualizar estado de cliente: ${e.message}", Toast.LENGTH_SHORT).show()
             }

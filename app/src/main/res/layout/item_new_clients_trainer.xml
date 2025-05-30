@@ -16,19 +16,16 @@
         android:padding="12dp"
         android:gravity="center_vertical">
 
-        <!-- Avatar -->
         <ImageView
             android:layout_width="56dp"
             android:layout_height="56dp"
             android:scaleType="centerCrop"
             android:src="@drawable/ic_client"/>
 
-        <!-- Espacio -->
         <Space
             android:layout_width="12dp"
             android:layout_height="match_parent" />
 
-        <!-- Texto -->
         <LinearLayout
             android:layout_width="0dp"
             android:layout_weight="1"

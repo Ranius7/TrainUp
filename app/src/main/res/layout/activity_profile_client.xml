@@ -6,7 +6,6 @@
     android:layout_height="match_parent"
     android:background="@color/white">
 
-    <!-- Toolbar arriba con usuario y ajustes -->
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbarProfile"
         android:layout_width="match_parent"
@@ -16,13 +15,11 @@
         app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
         app:menu="@menu/profile_menu"/>
 
-    <!-- Línea separadora -->
     <View
         android:layout_width="match_parent"
         android:layout_height="1dp"
         android:background="@color/gray_separator" />
 
-    <!-- Contenido scrollable -->
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="0dp"
@@ -34,7 +31,6 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-            <!-- Historial de entrenamientos -->
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -57,7 +53,6 @@
         </LinearLayout>
     </ScrollView>
 
-    <!-- Barra de navegación inferior -->
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/bottomNavigationClient"
         android:layout_width="match_parent"

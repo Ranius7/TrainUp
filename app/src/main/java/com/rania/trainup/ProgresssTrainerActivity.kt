@@ -60,6 +60,8 @@ class ProgressTrainerActivity : AppCompatActivity() {
             adapter = historyAdapter
         }
 
+        binding.bottomNavigationTrainer.selectedItemId = R.id.nav_clients
+
         loadClientTrainingHistory(clientUid!!)
         setupBottomNavigationView()
     }
@@ -87,26 +89,6 @@ class ProgressTrainerActivity : AppCompatActivity() {
         }
     }
 
-    private fun loadTrainingHistory(uid: String) {
-        CoroutineScope(Dispatchers.Main).launch {
-            try {
-                val historySnapshot = firestore.collection("users").document(uid).collection("training_history")
-                    .orderBy("date", com.google.firebase.firestore.Query.Direction.DESCENDING)
-                    .get().await()
-
-                trainingHistoryList.clear()
-                for (doc in historySnapshot.documents) {
-                    doc.toObject(TrainingHistory::class.java)?.let { trainingHistoryList.add(it) }
-                }
-                historyAdapter.notifyDataSetChanged()
-                if (trainingHistoryList.isEmpty()) {
-                    Toast.makeText(this@ProgressTrainerActivity, "Aún no hay historial de entrenamientos para este cliente.", Toast.LENGTH_SHORT).show()
-                }
-            } catch (e: Exception) {
-                Toast.makeText(this@ProgressTrainerActivity, "Error al cargar historial: ${e.message}", Toast.LENGTH_SHORT).show()
-            }
-        }
-    }
 
     private fun setupBottomNavigationView() {
         binding.bottomNavigationTrainer.setOnItemSelectedListener { item ->

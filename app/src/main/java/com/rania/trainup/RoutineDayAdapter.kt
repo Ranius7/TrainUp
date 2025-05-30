@@ -22,10 +22,8 @@ class RoutineDayAdapter(
 
     override fun onBindViewHolder(holder: RoutineDayViewHolder, position: Int) {
         val routineDay = routineDays[position]
-        // Título: grupo muscular
         holder.binding.tvMuscleGroup.text = routineDay.muscleGroup.uppercase()
 
-        // Comentario opcional
         if (!routineDay.comment.isNullOrBlank()) {
             holder.binding.tvComment.text = routineDay.comment
             holder.binding.tvComment.visibility = View.VISIBLE
@@ -33,12 +31,10 @@ class RoutineDayAdapter(
             holder.binding.tvComment.visibility = View.GONE
         }
 
-        // Número de ejercicios y series
         val numEjercicios = routineDay.exercises.size
         val numSeries = routineDay.exercises.sumOf { it.series }
         holder.binding.tvDetails.text = "$numEjercicios ejercicios · $numSeries series"
 
-        // Botones solo para entrenador
         if (isTrainer) {
             holder.binding.btnEditRoutineDay.visibility = View.VISIBLE
             holder.binding.btnDeleteRoutineDay.visibility = View.VISIBLE

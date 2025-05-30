@@ -39,6 +39,5 @@
             android:contentDescription="Eliminar objetivo"
             android:background="?attr/selectableItemBackgroundBorderless"
             android:layout_marginStart="8dp"/>
-
     </LinearLayout>
 </androidx.cardview.widget.CardView>

@@ -23,9 +23,6 @@
                 android:layout_height="wrap_content"
                 app:titleCentered="true"/>
 
-            <!-- Toolbar, título, etc. -->
-            <!-- ...otros views superiores... -->
-
             <TextView
                 android:id="@+id/tvTituloDia"
                 android:layout_width="wrap_content"
@@ -43,7 +40,6 @@
                 android:layout_marginBottom="12dp"
                 android:nestedScrollingEnabled="false"/>
 
-            <!-- Botones siempre al final del scroll -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -69,7 +65,6 @@
         </LinearLayout>
     </ScrollView>
 
-    <!-- Si tienes barra de navegación, ponla aquí fuera del scroll -->
 
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/bottomNavigationTrainer"
@@ -77,6 +72,4 @@
         android:layout_height="wrap_content"
         android:layout_gravity="bottom"
         app:menu="@menu/bottom_nav_menu_trainer"/>
-
-
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

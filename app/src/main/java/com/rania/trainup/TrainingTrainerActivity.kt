@@ -2,14 +2,15 @@ package com.rania.trainup
 
 import android.content.Intent
 import android.os.Bundle
+import android.widget.Button
+import android.widget.EditText
+import android.widget.TextView
 import android.widget.Toast
-import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
-import com.rania.trainup.databinding.ActivityTrainingTrainerBinding // Asumo este binding
-import com.rania.trainup.databinding.ItemExerciseTrainerBinding // Asumo este binding para el diálogo de edición
+import com.rania.trainup.databinding.ActivityTrainingTrainerBinding
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -24,8 +25,8 @@ class TrainingTrainerActivity : AppCompatActivity() {
     private lateinit var exerciseAdapter: ExerciseAdapter
     private val exercisesList = mutableListOf<Exercise>()
     private var clientUid: String? = null
-    private var trainerUid: String? = null //  UID del entrenador actual
-    private var currentRoutineDay: RoutineDay? = null // día de la rutina que se está editando
+    private var trainerUid: String? = null
+    private var currentRoutineDay: RoutineDay? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -61,7 +62,6 @@ class TrainingTrainerActivity : AppCompatActivity() {
 
         binding.tvTituloDia.text = currentRoutineDay!!.routineName.uppercase()
 
-        //  adaptador para el entrenador: isTrainer=true y se pasa el callback de edición
         exerciseAdapter = ExerciseAdapter(exercisesList, true) { clickedExercise ->
             showEditExerciseDialog(clickedExercise)
         }
@@ -73,6 +73,8 @@ class TrainingTrainerActivity : AppCompatActivity() {
         exercisesList.clear()
         exercisesList.addAll(currentRoutineDay!!.exercises)
         exerciseAdapter.notifyDataSetChanged()
+
+        binding.bottomNavigationTrainer.selectedItemId = R.id.nav_clients
 
         setupClickListeners()
         setupBottomNavigationView()
@@ -88,79 +90,102 @@ class TrainingTrainerActivity : AppCompatActivity() {
     }
 
     private fun showAddExerciseDialog() {
-        val dialogBinding = ItemExerciseTrainerBinding.inflate(layoutInflater)
-        AlertDialog.Builder(this)
-            .setTitle("Añadir Ejercicio")
-            .setView(dialogBinding.root)
-            .setPositiveButton("Añadir") { dialog, _ ->
-                val name = dialogBinding.etNombreEjercicio.text.toString().trim()
-                val material = dialogBinding.etMaterial.text.toString().trim()
-                val series = dialogBinding.etSeries.text.toString().toIntOrNull() ?: 0
-                val repetitions = dialogBinding.etRepeticiones.text.toString().toIntOrNull() ?: 0
-                val rest = dialogBinding.etDescanso.text.toString().trim()
-                val description = dialogBinding.etDescripcion.text.toString().trim() // <-- libre
+        val dialogView = layoutInflater.inflate(R.layout.dialog_edit_exercise, null)
+        val tvTitle = dialogView.findViewById<TextView>(R.id.tvDialogTitle)
+        val etNombre = dialogView.findViewById<EditText>(R.id.etNombreEjercicio)
+        val etMaterial = dialogView.findViewById<EditText>(R.id.etMaterial)
+        val etSeries = dialogView.findViewById<EditText>(R.id.etSeries)
+        val etReps = dialogView.findViewById<EditText>(R.id.etRepeticiones)
+        val etDescanso = dialogView.findViewById<EditText>(R.id.etDescanso)
+        val etDescripcion = dialogView.findViewById<EditText>(R.id.etDescripcion)
+        val btnCancel = dialogView.findViewById<Button>(R.id.btnCancel)
+        val btnSave = dialogView.findViewById<Button>(R.id.btnSave)
 
-                if (name.isNotEmpty() && series > 0 && repetitions > 0) {
-                    val newExercise = Exercise(name, material, series, repetitions,
-                        rest.toString(), description)
-                    exercisesList.add(newExercise)
-                    exerciseAdapter.notifyDataSetChanged()
-                } else {
-                    Toast.makeText(this, "Completa los campos obligatorios (nombre, series, reps)", Toast.LENGTH_SHORT).show()
-                }
+        tvTitle.text = "Añadir ejercicio"
+
+        val dialog = androidx.appcompat.app.AlertDialog.Builder(this)
+            .setView(dialogView)
+            .setCancelable(false)
+            .create()
+
+        btnCancel.setOnClickListener { dialog.dismiss() }
+        btnSave.setOnClickListener {
+            val name = etNombre.text.toString().trim()
+            val material = etMaterial.text.toString().trim()
+            val series = etSeries.text.toString().toIntOrNull() ?: 0
+            val repetitions = etReps.text.toString().toIntOrNull() ?: 0
+            val rest = etDescanso.text.toString().trim()
+            val description = etDescripcion.text.toString().trim()
+
+            if (name.isNotEmpty() && series > 0 && repetitions > 0) {
+                val newExercise = Exercise(name, material, series, repetitions, rest, description)
+                exercisesList.add(newExercise)
+                exerciseAdapter.notifyDataSetChanged()
                 dialog.dismiss()
+            } else {
+                if (name.isEmpty()) etNombre.error = "Obligatorio"
+                if (series <= 0) etSeries.error = "Obligatorio"
+                if (repetitions <= 0) etReps.error = "Obligatorio"
             }
-            .setNegativeButton("Cancelar") { dialog, _ -> dialog.cancel() }
-            .show()
+        }
+        dialog.show()
     }
 
     private fun showEditExerciseDialog(exercise: Exercise) {
-        val dialogBinding = ItemExerciseTrainerBinding.inflate(layoutInflater)
-        dialogBinding.etNombreEjercicio.setText(exercise.name)
-        dialogBinding.etMaterial.setText(exercise.material)
-        dialogBinding.etSeries.setText(exercise.series.toString())
-        dialogBinding.etRepeticiones.setText(exercise.repetitions.toString())
-        dialogBinding.etDescanso.setText(exercise.rest.toString())
-        dialogBinding.etDescripcion.setText(exercise.description)
+        val dialogView = layoutInflater.inflate(R.layout.dialog_edit_exercise, null)
+        val tvTitle = dialogView.findViewById<TextView>(R.id.tvDialogTitle)
+        val etNombre = dialogView.findViewById<EditText>(R.id.etNombreEjercicio)
+        val etMaterial = dialogView.findViewById<EditText>(R.id.etMaterial)
+        val etSeries = dialogView.findViewById<EditText>(R.id.etSeries)
+        val etReps = dialogView.findViewById<EditText>(R.id.etRepeticiones)
+        val etDescanso = dialogView.findViewById<EditText>(R.id.etDescanso)
+        val etDescripcion = dialogView.findViewById<EditText>(R.id.etDescripcion)
+        val btnCancel = dialogView.findViewById<Button>(R.id.btnCancel)
+        val btnSave = dialogView.findViewById<Button>(R.id.btnSave)
 
-        AlertDialog.Builder(this)
-            .setTitle("Editar Ejercicio")
-            .setView(dialogBinding.root)
-            .setPositiveButton("Guardar") { dialog, _ ->
-                val name = dialogBinding.etNombreEjercicio.text.toString().trim()
-                val material = dialogBinding.etMaterial.text.toString().trim()
-                val series = dialogBinding.etSeries.text.toString().toIntOrNull() ?: 0
-                val repetitions = dialogBinding.etRepeticiones.text.toString().toIntOrNull() ?: 0
-                val rest = dialogBinding.etDescanso.text.toString().trim()
-                val description = dialogBinding.etDescripcion.text.toString().trim()
+        tvTitle.text = "Editar ejercicio"
+        etNombre.setText(exercise.name)
+        etMaterial.setText(exercise.material)
+        etSeries.setText(exercise.series.toString())
+        etReps.setText(exercise.repetitions.toString())
+        etDescanso.setText(exercise.rest)
+        etDescripcion.setText(exercise.description)
 
-                if (name.isNotEmpty() && series > 0 && repetitions > 0) {
-                    val updatedExercise = Exercise(name, material, series, repetitions,
-                        rest.toString(), description)
-                    val index = exercisesList.indexOf(exercise)
-                    if (index != -1) {
-                        exercisesList[index] = updatedExercise
-                        exerciseAdapter.notifyItemChanged(index)
-                    }
-                } else {
-                    Toast.makeText(this, "Completa los campos obligatorios (nombre, series, reps)", Toast.LENGTH_SHORT).show()
+        val dialog = androidx.appcompat.app.AlertDialog.Builder(this)
+            .setView(dialogView)
+            .setCancelable(false)
+            .create()
+
+        btnCancel.setOnClickListener { dialog.dismiss() }
+        btnSave.setOnClickListener {
+            val name = etNombre.text.toString().trim()
+            val material = etMaterial.text.toString().trim()
+            val series = etSeries.text.toString().toIntOrNull() ?: 0
+            val repetitions = etReps.text.toString().toIntOrNull() ?: 0
+            val rest = etDescanso.text.toString().trim()
+            val description = etDescripcion.text.toString().trim()
+
+            if (name.isNotEmpty() && series > 0 && repetitions > 0) {
+                val updatedExercise = Exercise(name, material, series, repetitions, rest, description)
+                val index = exercisesList.indexOf(exercise)
+                if (index != -1) {
+                    exercisesList[index] = updatedExercise
+                    exerciseAdapter.notifyItemChanged(index)
                 }
                 dialog.dismiss()
+            } else {
+                if (name.isEmpty()) etNombre.error = "Obligatorio"
+                if (series <= 0) etSeries.error = "Obligatorio"
+                if (repetitions <= 0) etReps.error = "Obligatorio"
             }
-            .setNegativeButton("Eliminar") { dialog, _ ->
-                exercisesList.remove(exercise)
-                exerciseAdapter.notifyDataSetChanged()
-                dialog.dismiss()
-            }
-            .setNeutralButton("Cancelar") { dialog, _ -> dialog.cancel() }
-            .show()
+        }
+        dialog.show()
     }
 
     private fun saveRoutineChanges() {
         val trainerUid = auth.currentUser?.uid ?: return
         if (clientUid == null || currentRoutineDay == null) return
 
-        // Recalcular numExercises y numSets
         val numExercises = exercisesList.size
         val numSets = exercisesList.sumOf { it.series }
 
@@ -172,7 +197,6 @@ class TrainingTrainerActivity : AppCompatActivity() {
 
         CoroutineScope(Dispatchers.Main).launch {
             try {
-                // Obtener la rutina completa del entrenador para el cliente
                 val routineDocRef = firestore.collection("users").document(trainerUid)
                     .collection("routines").document(clientUid!!)
 
@@ -185,12 +209,12 @@ class TrainingTrainerActivity : AppCompatActivity() {
                         if (index != -1) {
                             updatedDays[index] = updatedRoutineDay
                         } else {
-                            updatedDays.add(updatedRoutineDay) // Si no existía, la añade
+                            updatedDays.add(updatedRoutineDay)
                         }
                         val newWeeklyRoutine = it.copy(routineDays = updatedDays)
                         routineDocRef.set(newWeeklyRoutine).await()
                         Toast.makeText(this@TrainingTrainerActivity, "Cambios guardados. No olvides 'Publicar' la rutina.", Toast.LENGTH_LONG).show()
-                        finish() // Volver a la rutina semanal del entrenador
+                        finish()
                     }
                 } else {
                     Toast.makeText(this@TrainingTrainerActivity, "No se encontró la rutina para actualizar. Crea una nueva.", Toast.LENGTH_SHORT).show()

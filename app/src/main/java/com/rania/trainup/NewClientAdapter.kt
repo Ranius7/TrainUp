@@ -28,9 +28,5 @@ class NewClientAdapter(
 
     override fun getItemCount(): Int = clients.size
 
-    fun updateClients(newClients: List<Client>) {
-        clients.clear()
-        clients.addAll(newClients)
-        notifyDataSetChanged()
-    }
+
 }

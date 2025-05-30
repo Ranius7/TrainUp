@@ -4,7 +4,9 @@ import android.content.Intent
 import android.os.Bundle
 import android.text.InputType
 import android.view.View
+import android.widget.Button
 import android.widget.EditText
+import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
@@ -46,7 +48,6 @@ class SettingsActivity : AppCompatActivity() {
             return
         }
 
-        // Toolbar igual que en el resto de pantallas y título en mayúsculas
         setSupportActionBar(binding.toolbarSettings)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         supportActionBar?.title = "AJUSTES"
@@ -61,9 +62,9 @@ class SettingsActivity : AppCompatActivity() {
             binding.bottomNavigationClient.visibility = View.GONE
             setupBottomNavigationViewTrainer()
         }
+        binding.bottomNavigationTrainer.selectedItemId = R.id.nav_settings
 
         setupClickListeners()
-
     }
 
     private fun setupClickListeners() {
@@ -74,18 +75,27 @@ class SettingsActivity : AppCompatActivity() {
     }
 
     private fun showDeleteAccountDialog() {
-        AlertDialog.Builder(this)
-            .setTitle("Eliminar cuenta")
-            .setMessage("¿Seguro que quieres eliminar tu cuenta? Esta acción no se puede deshacer.")
-            .setPositiveButton("Eliminar") { dialog, _ ->
-                showReauthDialogAndDeleteAccount()
-                dialog.dismiss()
-            }
-            .setNegativeButton("Cancelar") { dialog, _ -> dialog.dismiss() }
-            .show()
+        val dialogView = layoutInflater.inflate(R.layout.dialog_confirm_delete, null)
+        val btnCancel = dialogView.findViewById<Button>(R.id.btnCancel)
+        val btnDelete = dialogView.findViewById<Button>(R.id.btnDelete)
+
+        val dialog = AlertDialog.Builder(this)
+            .setView(dialogView)
+            .setCancelable(false)
+            .create()
+
+        btnCancel.setOnClickListener { dialog.dismiss() }
+        btnDelete.setOnClickListener {
+            showReauthDialogAndDeleteAccount()
+            dialog.dismiss()
+        }
+        dialog.show()
     }
 
     private fun showReauthDialogAndDeleteAccount() {
+        showReauthDialog { currentPassword ->
+            reauthenticateAndDeleteAccount(currentPassword)
+        }
         val builder = AlertDialog.Builder(this)
         builder.setTitle("Confirma tu contraseña")
         val input = EditText(this)
@@ -110,12 +120,10 @@ class SettingsActivity : AppCompatActivity() {
         user.reauthenticate(credential)
             .addOnCompleteListener { reauthTask ->
                 if (reauthTask.isSuccessful) {
-                    // Primero elimina de Firestore
                     val uid = currentUserUid ?: return@addOnCompleteListener
                     CoroutineScope(Dispatchers.Main).launch {
                         try {
                             firestore.collection("users").document(uid).delete().await()
-                            // Luego elimina de Auth
                             user.delete()
                                 .addOnCompleteListener { task ->
                                     if (task.isSuccessful) {
@@ -159,23 +167,31 @@ class SettingsActivity : AppCompatActivity() {
 
 
     private fun showChangeNameDialog() {
-        val builder = AlertDialog.Builder(this)
-        builder.setTitle("Cambiar Nombre")
-        val input = EditText(this)
-        input.hint = "Nuevo nombre"
-        builder.setView(input)
+        val dialogView = layoutInflater.inflate(R.layout.dialog_input_field, null)
+        val tvTitle = dialogView.findViewById<TextView>(R.id.tvDialogTitle)
+        val etInput = dialogView.findViewById<EditText>(R.id.etDialogInput)
+        val btnCancel = dialogView.findViewById<Button>(R.id.btnCancel)
+        val btnSave = dialogView.findViewById<Button>(R.id.btnSave)
 
-        builder.setPositiveButton("Guardar") { dialog, _ ->
-            val newName = input.text.toString().trim()
+        tvTitle.text = "Cambiar nombre"
+        etInput.hint = "Nuevo nombre"
+
+        val dialog = AlertDialog.Builder(this)
+            .setView(dialogView)
+            .setCancelable(false)
+            .create()
+
+        btnCancel.setOnClickListener { dialog.dismiss() }
+        btnSave.setOnClickListener {
+            val newName = etInput.text.toString().trim()
             if (newName.isNotEmpty()) {
                 updateUserName(newName)
+                dialog.dismiss()
             } else {
-                Toast.makeText(this, "El nombre no puede estar vacío", Toast.LENGTH_SHORT).show()
+                etInput.error = "El nombre no puede estar vacío"
             }
-            dialog.dismiss()
         }
-        builder.setNegativeButton("Cancelar") { dialog, _ -> dialog.cancel() }
-        builder.show()
+        dialog.show()
     }
 
     private fun updateUserName(newName: String) {
@@ -191,41 +207,64 @@ class SettingsActivity : AppCompatActivity() {
     }
 
     private fun showChangePasswordDialog() {
-        val builder = AlertDialog.Builder(this)
-        builder.setTitle("Cambiar Contraseña")
-        val input = EditText(this)
-        input.hint = "Nueva contraseña (mínimo 6 caracteres)"
-        input.inputType = InputType.TYPE_TEXT_VARIATION_PASSWORD
-        builder.setView(input)
+        val dialogView = layoutInflater.inflate(R.layout.dialog_input_field, null)
+        val tvTitle = dialogView.findViewById<TextView>(R.id.tvDialogTitle)
+        val etInput = dialogView.findViewById<EditText>(R.id.etDialogInput)
+        val btnCancel = dialogView.findViewById<Button>(R.id.btnCancel)
+        val btnSave = dialogView.findViewById<Button>(R.id.btnSave)
 
-        builder.setPositiveButton("Guardar") { dialog, _ ->
-            val newPassword = input.text.toString().trim()
+        tvTitle.text = "Cambiar contraseña"
+        etInput.hint = "Nueva contraseña (mínimo 6 caracteres)"
+        etInput.inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_PASSWORD
+
+        val dialog = AlertDialog.Builder(this)
+            .setView(dialogView)
+            .setCancelable(false)
+            .create()
+
+        btnCancel.setOnClickListener { dialog.dismiss() }
+        btnSave.setOnClickListener {
+            val newPassword = etInput.text.toString().trim()
             if (newPassword.length >= 6) {
-                showReauthDialogAndChangePassword(newPassword)
+                showReauthDialog { currentPassword ->
+                    reauthenticateAndChangePassword(currentPassword, newPassword)
+                }
+                dialog.dismiss()
             } else {
-                Toast.makeText(this, "La contraseña debe tener al menos 6 caracteres", Toast.LENGTH_SHORT).show()
+                etInput.error = "La contraseña debe tener al menos 6 caracteres"
             }
-            dialog.dismiss()
         }
-        builder.setNegativeButton("Cancelar") { dialog, _ -> dialog.cancel() }
-        builder.show()
+        dialog.show()
     }
 
-    private fun showReauthDialogAndChangePassword(newPassword: String) {
-        val builder = AlertDialog.Builder(this)
-        builder.setTitle("Introduce tu contraseña actual")
-        val input = EditText(this)
-        input.hint = "Contraseña actual"
-        input.inputType = InputType.TYPE_TEXT_VARIATION_PASSWORD
-        builder.setView(input)
+    private fun showReauthDialog(onPasswordEntered: (String) -> Unit) {
+        val dialogView = layoutInflater.inflate(R.layout.dialog_input_field, null)
+        val tvTitle = dialogView.findViewById<TextView>(R.id.tvDialogTitle)
+        val etPassword = dialogView.findViewById<EditText>(R.id.etDialogInput)
+        val btnCancel = dialogView.findViewById<Button>(R.id.btnCancel)
+        val btnConfirm = dialogView.findViewById<Button>(R.id.btnSave)
 
-        builder.setPositiveButton("Confirmar") { dialog, _ ->
-            val currentPassword = input.text.toString()
-            reauthenticateAndChangePassword(currentPassword, newPassword)
-            dialog.dismiss()
+        tvTitle.text = "Confirma tu contraseña"
+        etPassword.hint = "Contraseña actual"
+        etPassword.inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_PASSWORD
+        etPassword.text.clear()
+
+        val dialog = androidx.appcompat.app.AlertDialog.Builder(this)
+            .setView(dialogView)
+            .setCancelable(false)
+            .create()
+
+        btnCancel.setOnClickListener { dialog.dismiss() }
+        btnConfirm.setOnClickListener {
+            val password = etPassword.text.toString()
+            if (password.isNotEmpty()) {
+                onPasswordEntered(password)
+                dialog.dismiss()
+            } else {
+                etPassword.error = "Introduce tu contraseña"
+            }
         }
-        builder.setNegativeButton("Cancelar") { dialog, _ -> dialog.cancel() }
-        builder.show()
+        dialog.show()
     }
 
     private fun reauthenticateAndChangePassword(currentPassword: String, newPassword: String) {

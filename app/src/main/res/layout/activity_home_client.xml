@@ -19,7 +19,6 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
-            <!-- Header -->
             <TextView
                 android:id="@+id/tvWelcome"
                 android:layout_width="wrap_content"
@@ -40,7 +39,6 @@
                 android:textColor="#666666"
                 android:textSize="16sp" />
 
-            <!-- Tareas del día -->
             <TextView
                 android:id="@+id/tvTaskTraining"
                 android:layout_width="wrap_content"
@@ -70,7 +68,6 @@
                 android:nestedScrollingEnabled="false"
                 android:layout_marginBottom="8dp"/>
 
-            <!-- Objetivos diarios -->
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -90,7 +87,6 @@
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>
 
-    <!-- Botón fijo encima de la barra -->
     <Button
         android:id="@+id/btnAgregarObjetivo"
         android:layout_width="match_parent"

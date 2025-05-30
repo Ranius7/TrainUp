@@ -8,7 +8,6 @@
     android:orientation="vertical"
     android:background="#F9F9F9">
 
-    <!-- CABECERA -->
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbarClient"
         android:layout_width="match_parent"
@@ -23,10 +22,6 @@
         android:orientation="vertical"
         android:padding="16dp">
 
-        <!-- Título del plan de entrenamiento -->
-
-
-        <!-- Card con imagen y título del plan de entrenamiento -->
         <androidx.cardview.widget.CardView
             android:layout_width="match_parent"
             android:layout_height="200dp"
@@ -38,14 +33,12 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
 
-                <!-- Imagen de fondo -->
                 <ImageView
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:scaleType="centerCrop"
-                    android:src="@drawable/ic_training_plan"/>
+                    android:src="@drawable/img_training_plan"/>
 
-                <!-- Título superpuesto al final de la imagen -->
                 <TextView
                     android:id="@+id/tvPlanEntrenamientoCliente"
                     android:layout_width="match_parent"
@@ -61,7 +54,6 @@
             </RelativeLayout>
         </androidx.cardview.widget.CardView>
 
-        <!-- RecyclerView que mostrará los días de entrenamiento -->
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rvWeeklyRutineClient"
             android:layout_width="match_parent"
@@ -71,7 +63,6 @@
 
     </LinearLayout>
 
-    <!-- Barra de navegación inferior -->
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/bottomNavigationClient"
         android:layout_width="match_parent"

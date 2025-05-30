@@ -19,7 +19,6 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-            <!-- Header saludo -->
             <TextView
                 android:id="@+id/tvWelcomeTrainer"
                 android:layout_width="wrap_content"
@@ -39,7 +38,6 @@
                 android:textColor="#666666"
                 android:textSize="16sp" />
 
-            <!-- CardView NUEVOS CLIENTES - clickable -->
             <androidx.cardview.widget.CardView
                 android:id="@+id/cvNewClients"
                 android:layout_width="match_parent"
@@ -101,7 +99,6 @@
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
 
-            <!-- Progreso clientes -->
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -129,7 +126,6 @@
         </LinearLayout>
     </ScrollView>
 
-    <!-- Bottom Navigation -->
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/bottomNavigationTrainer"
         android:layout_width="match_parent"

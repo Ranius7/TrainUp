@@ -14,7 +14,6 @@
         android:layout_height="wrap_content"
         android:padding="16dp">
 
-        <!-- Título: grupo muscular -->
         <TextView
             android:id="@+id/tvMuscleGroup"
             android:layout_width="wrap_content"
@@ -24,11 +23,7 @@
             android:textStyle="bold"
             android:textColor="#333333" />
 
-        <!-- Botón editar (solo entrenador) -->
-        <!-- Botón editar (solo entrenador) -->
 
-
-        <!-- Botón eliminar (solo entrenador) -->
         <ImageButton
             android:id="@+id/btnDeleteRoutineDay"
             android:layout_width="wrap_content"
@@ -51,7 +46,6 @@
             android:layout_marginEnd="8dp"
             android:layout_marginTop="5dp"/>
 
-        <!-- Comentario opcional -->
         <TextView
             android:id="@+id/tvComment"
             android:layout_width="wrap_content"
@@ -63,7 +57,6 @@
             android:layout_marginTop="4dp"
             android:visibility="gone"/>
 
-        <!-- Detalle: número de ejercicios y series -->
         <TextView
             android:id="@+id/tvDetails"
             android:layout_width="wrap_content"

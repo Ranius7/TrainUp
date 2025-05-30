@@ -7,8 +7,8 @@ import com.rania.trainup.databinding.ItemExerciseBinding
 
 class ExerciseAdapter(
     private val exercises: MutableList<Exercise>,
-    private val isTrainer: Boolean, // para saber si es el entrenador quien ve la lista
-    private val onEditClick: ((Exercise) -> Unit)? = null //  para editar (solo entrenador)
+    private val isTrainer: Boolean,
+    private val onEditClick: ((Exercise) -> Unit)? = null
 ) : RecyclerView.Adapter<ExerciseAdapter.ExerciseViewHolder>() {
 
     class ExerciseViewHolder(val binding: ItemExerciseBinding) : RecyclerView.ViewHolder(binding.root)
@@ -25,17 +25,14 @@ class ExerciseAdapter(
         holder.binding.tvMaterialClient.text = "Material: ${exercise.material.ifEmpty { "Ninguno" }}"
         holder.binding.tvDescriptionClient.text = "Descripción: ${exercise.description.ifEmpty { "N/A" }}"
 
-        // Checkbox solo visible para el cliente
         holder.binding.cbExerciseDone.visibility = if (isTrainer) android.view.View.GONE else android.view.View.VISIBLE
 
-        // Sincroniza el estado del checkbox con el modelo
         holder.binding.cbExerciseDone.setOnCheckedChangeListener(null)
         holder.binding.cbExerciseDone.isChecked = exercise.isChecked
         holder.binding.cbExerciseDone.setOnCheckedChangeListener { _, isChecked ->
             exercise.isChecked = isChecked
         }
 
-        // Botón editar solo para entrenador
         if (isTrainer && onEditClick != null) {
             holder.binding.btnEditExercise.visibility = android.view.View.VISIBLE
             holder.binding.btnEditExercise.setOnClickListener {

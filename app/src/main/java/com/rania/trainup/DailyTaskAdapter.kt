@@ -38,7 +38,7 @@ class DailyTaskAdapter(
             }
         }
 
-        // Mostrar/ocultar botones según los callbacks
+
         holder.binding.btnEditTask?.apply {
             visibility = if (onEdit != null) View.VISIBLE else View.GONE
             setOnClickListener { onEdit?.invoke(task) }

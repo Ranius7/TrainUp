@@ -6,7 +6,6 @@
     android:layout_height="match_parent"
     android:background="@color/white">
 
-    <!-- Toolbar -->
     <com.google.android.material.appbar.MaterialToolbar
         android:id="@+id/toolbarNewClients"
         android:layout_width="match_parent"
@@ -15,7 +14,6 @@
         app:titleTextColor="@color/black"
         app:navigationIcon="@drawable/baseline_arrow_back_24"/>
 
-    <!-- RecyclerView para mostrar nuevos clientes -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rvNewClients"
         android:layout_width="match_parent"
@@ -24,7 +22,6 @@
         android:layout_marginBottom="56dp"
         app:layout_behavior="@string/appbar_scrolling_view_behavior"/>
 
-    <!-- Bottom Navigation -->
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/bottomNavigationTrainer"
         android:layout_width="match_parent"

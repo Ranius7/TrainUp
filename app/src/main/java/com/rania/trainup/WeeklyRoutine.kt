@@ -10,3 +10,4 @@ data class WeeklyRoutine(
     val routineDays: List<RoutineDay> = emptyList(),
     val published: Boolean = false
 ) : Parcelable
+

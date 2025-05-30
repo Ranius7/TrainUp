@@ -53,7 +53,6 @@ class HomeClientActivity : AppCompatActivity() {
             return
         }
 
-        // Objetivos diarios
         goalAdapter = GoalAdapter(goalsList,
             onGoalCheckedChange = { goal, isChecked ->
                 toggleGoalCompletion(goal, isChecked)
@@ -74,7 +73,6 @@ class HomeClientActivity : AppCompatActivity() {
         binding.rvObjetivos.adapter = goalAdapter
         binding.rvObjetivos.layoutManager = LinearLayoutManager(this)
 
-        // Tareas del entrenador
         tareasEntrenadorAdapter = DailyTaskAdapter(
             tareasEntrenadorList,
             onCheckedChange = { task, isChecked -> toggleTaskCompletion(task, isChecked) }
@@ -122,7 +120,6 @@ class HomeClientActivity : AppCompatActivity() {
                     doc.toObject(DailyTask::class.java)?.let { tareasEntrenadorList.add(it) }
                 }
                 tareasEntrenadorAdapter.notifyDataSetChanged()
-                // Mostrar u ocultar el mensaje según haya tareas o no
                 binding.tvNoTareasEntrenador.visibility =
                     if (tareasEntrenadorList.isEmpty()) View.VISIBLE else View.GONE
             } catch (e: Exception) {
@@ -135,7 +132,6 @@ class HomeClientActivity : AppCompatActivity() {
     private fun toggleTaskCompletion(task: DailyTask, isChecked: Boolean) {
         val uid = auth.currentUser?.uid ?: return
         if (isChecked) {
-            // Si se marca como hecha, elimina la tarea de Firestore y de la lista local, no se si lo quiero así, de momento lo dejo
             CoroutineScope(Dispatchers.Main).launch {
                 try {
                     firestore.collection("users").document(uid)
@@ -146,7 +142,6 @@ class HomeClientActivity : AppCompatActivity() {
                         tareasEntrenadorList.removeAt(index)
                         tareasEntrenadorAdapter.notifyItemRemoved(index)
                     }
-                    // Mostrar mensaje si ya no quedan tareas
                     binding.tvNoTareasEntrenador.visibility =
                         if (tareasEntrenadorList.isEmpty()) View.VISIBLE else View.GONE
                 } catch (e: Exception) {
@@ -154,7 +149,6 @@ class HomeClientActivity : AppCompatActivity() {
                 }
             }
         } else {
-            // Si se desmarca, simplemente se actualiza el estado
             val updatedTask = task.copy(isCompleted = false)
             CoroutineScope(Dispatchers.Main).launch {
                 try {

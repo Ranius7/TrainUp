@@ -10,5 +10,5 @@ data class RoutineDay(
     val comment: String? = null,
     val numExercises: Int = 0,
     val numSets: Int = 0,
-    val exercises: List<Exercise> = emptyList() // Lista de ejercicios para este día
+    val exercises: List<Exercise> = emptyList()
 ) : Parcelable

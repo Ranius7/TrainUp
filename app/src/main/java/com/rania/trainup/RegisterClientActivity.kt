@@ -72,7 +72,6 @@ class RegisterClientActivity : AppCompatActivity() {
                         .await()
                     val currentClients = clientsSnapshot.size()
 
-                    // Mostrar nombre + especialidad
                     val displayName = if (specialty.isNotEmpty()) {
                         "$trainerName - $specialty"
                     } else {

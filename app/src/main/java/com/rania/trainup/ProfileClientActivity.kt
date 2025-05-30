@@ -48,9 +48,7 @@ class ProfileClientActivity : AppCompatActivity() {
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         binding.toolbarProfile.setNavigationOnClickListener { onBackPressedDispatcher.onBackPressed() }
 
-        // El menú de ajustes se gestiona con onCreateOptionsMenu/onOptionsItemSelected
 
-        // Accede al RecyclerView incluido usando findViewById sobre la raíz del binding
         val rvTrainingHistory = binding.root.findViewById<RecyclerView>(R.id.rvTrainingHistory)
         historyAdapter = TrainingHistoryAdapter(trainingHistoryList)
         rvTrainingHistory.layoutManager = LinearLayoutManager(this)

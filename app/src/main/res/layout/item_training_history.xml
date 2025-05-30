@@ -40,6 +40,5 @@
             android:text="⏱️ Duración: 45 minutos"
             android:textSize="14sp"
             android:textColor="#444444" />
-
     </LinearLayout>
 </androidx.cardview.widget.CardView>

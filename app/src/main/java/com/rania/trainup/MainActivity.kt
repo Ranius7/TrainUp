@@ -25,17 +25,14 @@ class MainActivity : AppCompatActivity() {
         sessionManager = SessionManager(this)
         auth = FirebaseAuth.getInstance()
 
-        // Comprobar si ya hay una sesión iniciada
         val (email, role, uid) = sessionManager.getSession()
         val firebaseUser = auth.currentUser
 
         if (firebaseUser != null && email != null && role != null && uid == firebaseUser.uid) {
-            // Si el usuario está autenticado en Firebase y tenemos su sesión guardada, redirigimos directamente
             navigateToHome(role)
-            return // Salir de onCreate para evitar inflar la vista de selección de rol
+            return
         }
 
-        // Si no hay sesión o no coincide con Firebase Auth, mostramos el main para seleccionar el rol
         binding.btnClient.setOnClickListener {
             navigateToLogin(ROLE_CLIENT)
         }
@@ -59,7 +56,7 @@ class MainActivity : AppCompatActivity() {
         }
         intent?.let {
             startActivity(it)
-            finish() // Cierra MainActivity para que el usuario no pueda volver con el botón atrás
+            finish()
         }
     }
 }

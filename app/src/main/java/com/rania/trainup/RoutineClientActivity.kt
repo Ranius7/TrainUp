@@ -72,7 +72,6 @@ class RoutineClientActivity : AppCompatActivity() {
                 val trainerUid = clientDoc.getString("trainerUid")
                 val clientName = clientDoc.getString("name")
 
-                // Aquí el cambio pedido:
                 val nombreCliente = (clientName ?: "CLIENTE").uppercase()
                 binding.tvPlanEntrenamientoCliente.text = "PLAN DE ENTRENAMIENTO DE $nombreCliente"
 

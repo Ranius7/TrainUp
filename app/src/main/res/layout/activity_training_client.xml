@@ -6,7 +6,6 @@
     android:orientation="vertical"
     android:background="@color/white">
 
-    <!-- CABECERA -->
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbarClient"
         android:layout_width="match_parent"
@@ -16,7 +15,6 @@
         app:titleTextColor="@color/black"
         android:navigationIcon="@drawable/ic_arrow_back" />
 
-    <!-- Contenido principal -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
@@ -24,7 +22,6 @@
         android:orientation="vertical"
         android:padding="16dp">
 
-        <!-- Título del entreno -->
         <TextView
             android:id="@+id/tvMuscleGroupTitle"
             android:layout_width="wrap_content"
@@ -35,7 +32,6 @@
             android:textColor="@color/black"
             android:layout_marginBottom="8dp" />
 
-        <!-- Material necesario -->
         <TextView
             android:id="@+id/tvMaterialClient"
             android:layout_width="wrap_content"
@@ -45,14 +41,12 @@
             android:textColor="#444444"
             android:layout_marginBottom="16dp" />
 
-        <!-- RecyclerView para ejercicios -->
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rvExercisesClient"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1" />
 
-        <!-- Botón para iniciar el entrenamiento -->
         <Button
             android:id="@+id/btnStartTraining"
             android:layout_width="match_parent"
@@ -63,7 +57,6 @@
             android:backgroundTint="@color/purple_trainer"
             android:padding="12dp"/>
 
-        <!-- Botón para finalizar el entrenamiento -->
         <Button
             android:id="@+id/btnFinishTraining"
             android:layout_width="match_parent"
@@ -77,7 +70,6 @@
 
     </LinearLayout>
 
-    <!-- Barra de navegación inferior -->
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/bottomNavigationClient"
         android:layout_width="match_parent"

@@ -68,11 +68,12 @@ class TrainingClientActivity : AppCompatActivity() {
             adapter = exerciseAdapter
         }
 
-        // Estado inicial de los botones
         binding.btnStartTraining.visibility = android.view.View.VISIBLE
         binding.btnStartTraining.isEnabled = true
         binding.btnFinishTraining.visibility = android.view.View.GONE
         binding.btnFinishTraining.isEnabled = true
+
+        binding.bottomNavigationClient.selectedItemId = R.id.itNavTraining
 
         setupClickListeners()
         setupBottomNavigationView()
@@ -94,7 +95,6 @@ class TrainingClientActivity : AppCompatActivity() {
             val endTime = System.currentTimeMillis()
             val durationMillis = endTime - startTime
 
-            // Formatea la duración
             val hours = (durationMillis / (1000 * 60 * 60)).toInt()
             val minutes = ((durationMillis / (1000 * 60)) % 60).toInt()
             val seconds = ((durationMillis / 1000) % 60).toInt()
@@ -107,7 +107,6 @@ class TrainingClientActivity : AppCompatActivity() {
             saveTrainingHistory(durationMillis, durationString)
             Toast.makeText(this, "Entrenamiento finalizado. Duración: $durationString.", Toast.LENGTH_LONG).show()
 
-            // Desmarcar todos los ejercicios
             exerciseAdapter.uncheckAll()
 
             startTime = 0L

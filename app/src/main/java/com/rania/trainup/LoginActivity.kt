@@ -60,7 +60,6 @@ class LoginActivity : AppCompatActivity() {
                     val uid = user?.uid
 
                     if (uid != null) {
-                        // Validar que el rol del usuario en la DB coincide con el rol seleccionado
                         CoroutineScope(Dispatchers.Main).launch {
                             try {
                                 val userDoc = firestore.collection("users").document(uid).get().await()
@@ -71,7 +70,7 @@ class LoginActivity : AppCompatActivity() {
                                     Toast.makeText(this@LoginActivity, "Inicio de sesión exitoso", Toast.LENGTH_SHORT).show()
                                     navigateToHome(selectedRole!!)
                                 } else {
-                                    auth.signOut() // Cerrar sesión si el rol no coincide o no existe
+                                    auth.signOut()
                                     Toast.makeText(this@LoginActivity, "Credenciales o rol incorrectos. Intenta de nuevo.", Toast.LENGTH_LONG).show()
                                 }
                             } catch (e: Exception) {
@@ -92,7 +91,7 @@ class LoginActivity : AppCompatActivity() {
         val intent = when (selectedRole) {
             MainActivity.ROLE_CLIENT -> Intent(this, RegisterClientActivity::class.java)
             MainActivity.ROLE_TRAINER -> Intent(this, RegisterTrainerActivity::class.java)
-            else -> Intent(this, MainActivity::class.java) // En caso de rol desconocido, vuelve al main
+            else -> Intent(this, MainActivity::class.java)
         }
         intent.putExtra(EXTRA_ROLE, selectedRole)
         startActivity(intent)
@@ -102,9 +101,9 @@ class LoginActivity : AppCompatActivity() {
         val intent = when (role) {
             MainActivity.ROLE_CLIENT -> Intent(this, HomeClientActivity::class.java)
             MainActivity.ROLE_TRAINER -> Intent(this, HomeTrainerActivity::class.java)
-            else -> Intent(this, MainActivity::class.java) // En caso de rol desconocido
+            else -> Intent(this, MainActivity::class.java)
         }
         startActivity(intent)
-        finish() // Cierra LoginActivity
+        finish()
     }
 }

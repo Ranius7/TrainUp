@@ -44,9 +44,6 @@
                 android:layout_height="wrap_content"
                 android:text="email@cliente.com"
                 android:textSize="14sp"/>
-
         </LinearLayout>
-
     </LinearLayout>
-
 </androidx.cardview.widget.CardView>

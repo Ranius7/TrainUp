@@ -3,7 +3,6 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <!-- Toolbar -->
     <com.google.android.material.appbar.MaterialToolbar
         android:id="@+id/toolbarRutina"
         android:layout_width="0dp"
@@ -13,7 +12,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"/>
 
-    <!-- Título debajo del toolbar -->
     <TextView
         android:id="@+id/tvTituloRutina"
         android:layout_width="wrap_content"
@@ -66,7 +64,6 @@
             android:layout_marginBottom="0dp"/>
     </LinearLayout>
 
-    <!-- RecyclerView ocupa el espacio entre el título y los botones -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rvRutinaSemanal"
         android:layout_width="0dp"
@@ -76,7 +73,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"/>
 
-    <!-- Barra de navegación fija abajo -->
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/bottomNavigationTrainer"
         android:layout_width="0dp"

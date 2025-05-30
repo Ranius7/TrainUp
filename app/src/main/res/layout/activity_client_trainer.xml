@@ -6,7 +6,6 @@
     android:layout_height="match_parent"
     android:background="@android:color/white">
 
-    <!-- AppBarLayout para toolbar -->
     <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -21,7 +20,6 @@
             app:navigationIcon="@drawable/ic_arrow_back"/>
     </com.google.android.material.appbar.AppBarLayout>
 
-    <!-- Contenedor principal debajo del toolbar -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -31,7 +29,6 @@
         android:paddingTop="16dp"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
-        <!-- Cliente nombre -->
         <TextView
             android:id="@+id/tvClientName"
             android:layout_width="wrap_content"
@@ -50,7 +47,6 @@
             android:textSize="18sp"
             android:layout_marginBottom="50dp"/>
 
-        <!-- Opciones Rutina y Progreso -->
         <androidx.cardview.widget.CardView
             android:id="@+id/cardRoutine"
             android:layout_width="match_parent"
@@ -134,7 +130,6 @@
 
     </LinearLayout>
 
-    <!-- Bottom Navigation -->
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/bottomNavigationTrainer"
         android:layout_width="match_parent"

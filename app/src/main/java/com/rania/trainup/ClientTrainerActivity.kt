@@ -4,6 +4,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.widget.Button
 import android.widget.EditText
+import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
@@ -58,6 +59,8 @@ class ClientTrainerActivity : AppCompatActivity() {
         supportActionBar?.title = "DETALLES DEL CLIENTE"
         binding.toolbarClientDetail.setNavigationOnClickListener { onBackPressedDispatcher.onBackPressed() }
 
+        binding.bottomNavigationTrainer.selectedItemId = R.id.nav_clients
+
         loadClientDetails(clientUid!!)
         setupClickListeners()
         setupBottomNavigationView()
@@ -78,9 +81,10 @@ class ClientTrainerActivity : AppCompatActivity() {
                         binding.tvClientName.text = nombreCliente
                         binding.tvClientInfo.text = it.objective
 
-                        // Cambia directamente los textos de los TextView de los CardView
+
                         binding.tvCardRoutineTitle.text = "GESTIONAR RUTINAS DE $nombreCliente"
                         binding.tvCardProgressTitle.text = "VER HISTORIAL DE $nombreCliente"
+                        binding.tvCardDailyTasksTitle.text = "TAREAS DE $nombreCliente"
 
                     }
                 } else {
@@ -109,21 +113,30 @@ class ClientTrainerActivity : AppCompatActivity() {
 
     private fun showAddTaskDialog(onTaskAdded: (DailyTask) -> Unit) {
         val dialogView = layoutInflater.inflate(R.layout.dialog_add_task, null)
-        val etTitle = dialogView.findViewById<EditText>(R.id.etTaskTitle)
+        val tvTitle = dialogView.findViewById<TextView>(R.id.tvDialogTitle)
+        val etTaskTitle = dialogView.findViewById<EditText>(R.id.etTaskTitle)
+        val btnCancel = dialogView.findViewById<Button>(R.id.btnCancel)
+        val btnSave = dialogView.findViewById<Button>(R.id.btnSave)
 
-        AlertDialog.Builder(this)
-            .setTitle("Nueva tarea diaria")
+        tvTitle.text = "Nueva tarea"
+        etTaskTitle.hint = "Título de la tarea"
+
+        val dialog = androidx.appcompat.app.AlertDialog.Builder(this)
             .setView(dialogView)
-            .setPositiveButton("Guardar") { _, _ ->
-                val title = etTitle.text.toString().trim()
-                if (title.isNotEmpty()) {
-                    saveDailyTask(title, onTaskAdded)
-                } else {
-                    Toast.makeText(this, "El título es obligatorio", Toast.LENGTH_SHORT).show()
-                }
+            .setCancelable(false)
+            .create()
+
+        btnCancel.setOnClickListener { dialog.dismiss() }
+        btnSave.setOnClickListener {
+            val title = etTaskTitle.text.toString().trim()
+            if (title.isNotEmpty()) {
+                saveDailyTask(title, onTaskAdded)
+                dialog.dismiss()
+            } else {
+                etTaskTitle.error = "El título es obligatorio"
             }
-            .setNegativeButton("Cancelar", null)
-            .show()
+        }
+        dialog.show()
     }
 
     private fun saveDailyTask(title: String, onTaskAdded: (DailyTask) -> Unit) {
@@ -150,6 +163,12 @@ class ClientTrainerActivity : AppCompatActivity() {
     }
 
     private fun showDailyTasksDialog() {
+        val dialogView = layoutInflater.inflate(R.layout.dialog_daily_tasks, null)
+        val rvDailyTasks = dialogView.findViewById<RecyclerView>(R.id.rvDailyTasks)
+        val btnAddTask = dialogView.findViewById<Button>(R.id.btnAddTask)
+        val btnClose = dialogView.findViewById<Button>(R.id.btnClose)
+        val tvTitle = dialogView.findViewById<TextView>(R.id.tvDialogTitle)
+
         val tasksList = mutableListOf<DailyTask>()
         lateinit var adapter: DailyTaskAdapter
 
@@ -160,14 +179,10 @@ class ClientTrainerActivity : AppCompatActivity() {
             onDelete = { task -> deleteDailyTask(task, tasksList, adapter) }
         )
 
-        val dialogView = layoutInflater.inflate(R.layout.dialog_daily_tasks, null)
-        val rvDailyTasks = dialogView.findViewById<RecyclerView>(R.id.rvDailyTasks)
-        val btnAddTask = dialogView.findViewById<Button>(R.id.btnAddTask)
-
         rvDailyTasks.layoutManager = LinearLayoutManager(this)
         rvDailyTasks.adapter = adapter
 
-        // Cargar tareas de Firestore
+
         CoroutineScope(Dispatchers.Main).launch {
             val snapshot = firestore.collection("users").document(clientUid!!)
                 .collection("daily_tasks").get().await()
@@ -178,10 +193,9 @@ class ClientTrainerActivity : AppCompatActivity() {
             adapter.notifyDataSetChanged()
         }
 
-        val dialog = AlertDialog.Builder(this)
-            .setTitle("Tareas diarias")
+        val dialog = androidx.appcompat.app.AlertDialog.Builder(this)
             .setView(dialogView)
-            .setNegativeButton("Cerrar", null)
+            .setCancelable(false)
             .create()
 
         btnAddTask.setOnClickListener {
@@ -190,32 +204,44 @@ class ClientTrainerActivity : AppCompatActivity() {
                 adapter.notifyItemInserted(tasksList.size - 1)
             }
         }
+        btnClose.setOnClickListener { dialog.dismiss() }
 
         dialog.show()
     }
 
     private fun showEditTaskDialog(task: DailyTask) {
-        val dialogView = layoutInflater.inflate(R.layout.dialog_add_task, null)
-        val etTitle = dialogView.findViewById<EditText>(R.id.etTaskTitle)
-        etTitle.setText(task.title)
+        val dialogView = layoutInflater.inflate(R.layout.dialog_input_field, null)
+        val tvTitle = dialogView.findViewById<TextView>(R.id.tvDialogTitle)
+        val etInput = dialogView.findViewById<EditText>(R.id.etDialogInput)
+        val btnCancel = dialogView.findViewById<Button>(R.id.btnCancel)
+        val btnSave = dialogView.findViewById<Button>(R.id.btnSave)
 
-        AlertDialog.Builder(this)
-            .setTitle("Editar tarea")
+        tvTitle.text = "Editar tarea"
+        etInput.setText(task.title)
+        etInput.hint = "Título de la tarea"
+
+        val dialog = AlertDialog.Builder(this)
             .setView(dialogView)
-            .setPositiveButton("Guardar") { _, _ ->
-                val newTitle = etTitle.text.toString().trim()
-                if (newTitle.isNotEmpty()) {
-                    val updatedTask = task.copy(title = newTitle)
-                    CoroutineScope(Dispatchers.Main).launch {
-                        firestore.collection("users").document(clientUid!!)
-                            .collection("daily_tasks").document(task.id)
-                            .set(updatedTask).await()
-                        Toast.makeText(this@ClientTrainerActivity, "Tarea actualizada", Toast.LENGTH_SHORT).show()
-                    }
+            .setCancelable(false)
+            .create()
+
+        btnCancel.setOnClickListener { dialog.dismiss() }
+        btnSave.setOnClickListener {
+            val newTitle = etInput.text.toString().trim()
+            if (newTitle.isNotEmpty()) {
+                val updatedTask = task.copy(title = newTitle)
+                CoroutineScope(Dispatchers.Main).launch {
+                    firestore.collection("users").document(clientUid!!)
+                        .collection("daily_tasks").document(task.id)
+                        .set(updatedTask).await()
+                    Toast.makeText(this@ClientTrainerActivity, "Tarea actualizada", Toast.LENGTH_SHORT).show()
                 }
+                dialog.dismiss()
+            } else {
+                etInput.error = "El título es obligatorio"
             }
-            .setNegativeButton("Cancelar", null)
-            .show()
+        }
+        dialog.show()
     }
 
     private fun deleteDailyTask(task: DailyTask, tasksList: MutableList<DailyTask>, adapter: DailyTaskAdapter) {

@@ -62,7 +62,7 @@ class RegisterTrainerActivity : AppCompatActivity() {
                             "name" to name,
                             "email" to email,
                             "maxClients" to maxClients,
-                            "specialty" to specialty, // NUEVO
+                            "specialty" to specialty,
                             "uid" to uid,
                             "role" to MainActivity.ROLE_TRAINER
                         )
